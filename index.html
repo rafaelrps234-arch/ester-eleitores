@@ -87,15 +87,12 @@ header p{font-size:.8rem;opacity:.8}
 #toast.erro{background:#c0392b}
 .vazio{text-align:center;padding:36px 20px;color:var(--cinza);font-size:.92rem}
 .sync-info{font-size:.72rem;color:var(--cinza);text-align:right;margin-bottom:6px}
-
-/* LOGIN */
 .login-tela{min-height:100vh;background:linear-gradient(135deg,var(--verde) 0%,var(--verde-escuro) 100%);display:flex;align-items:center;justify-content:center;padding:20px}
-.login-card{background:#fff;border-radius:16px;padding:32px 28px;max-width:360px;width:100%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.25)}
+.login-card{background:#fff;border-radius:16px;padding:32px 28px;max-width:360px;width:100%;text-align:center}
 .login-card .emoji{font-size:2.5rem;margin-bottom:10px}
 .login-card h1{color:var(--verde);font-size:1.3rem;margin-bottom:6px}
 .login-card p{color:var(--cinza);font-size:.85rem;margin-bottom:24px}
 .login-erro{color:#c0392b;font-size:.85rem;margin-top:10px;display:none}
-
 @media(max-width:480px){.stats{grid-template-columns:1fr 1fr}.stat-card:last-child{grid-column:span 2}}
 </style>
 </head>
@@ -118,6 +115,14 @@ header p{font-size:.8rem;opacity:.8}
 <script>
 const KEY='rede_ester_v2';
 const SENHA='RAFAEL';
+const SITE='https://rafaelrps234-arch.github.io/ester-eleitores/';
+
+function baseUrl(){
+  const o=location.origin;
+  if(!o||o==='null'||o.startsWith('file'))return SITE;
+  return o+location.pathname;
+}
+
 function load(){try{return JSON.parse(localStorage.getItem(KEY))||[];}catch{return[];}}
 function save(d){try{localStorage.setItem(KEY,JSON.stringify(d));}catch{toast('Erro ao salvar',true);}}
 function adminLogado(){return sessionStorage.getItem('admin_ok')==='1';}
@@ -132,23 +137,19 @@ else if(painelId){renderPainelApoiador(painelId);}
 else if(adminLogado()){renderAdmin();}
 else{renderLogin();}
 
-function baseUrl(){return location.origin+location.pathname;}
 function linkCadastro(r){return baseUrl()+'?cadastro=1'+(r?'&ref='+r:'');}
 function linkPainel(id){return baseUrl()+'?painel='+id;}
 
-/* ══ LOGIN ══ */
 function renderLogin(){
   document.getElementById('app').innerHTML=`
-  <div class="login-tela">
-    <div class="login-card">
-      <div class="emoji">🌿</div>
-      <h1>Rede Ester Carvalho</h1>
-      <p>Painel Administrativo — acesso restrito</p>
-      <div class="campo"><label>Senha</label><input id="inp-senha" type="password" placeholder="Digite a senha" onkeydown="if(event.key==='Enter')entrar()"></div>
-      <button class="btn btn-verde btn-full" onclick="entrar()">🔐 Entrar</button>
-      <div class="login-erro" id="login-erro">Senha incorreta. Tente novamente.</div>
-    </div>
-  </div>`;
+  <div class="login-tela"><div class="login-card">
+    <div class="emoji">🌿</div>
+    <h1>Rede Ester Carvalho</h1>
+    <p>Painel Administrativo — acesso restrito</p>
+    <div class="campo"><label>Senha</label><input id="inp-senha" type="password" placeholder="Digite a senha" onkeydown="if(event.key==='Enter')entrar()"></div>
+    <button class="btn btn-verde btn-full" onclick="entrar()">🔐 Entrar</button>
+    <div class="login-erro" id="login-erro">Senha incorreta. Tente novamente.</div>
+  </div></div>`;
   setTimeout(()=>document.getElementById('inp-senha')?.focus(),100);
 }
 
@@ -158,7 +159,6 @@ function entrar(){
   else{document.getElementById('login-erro').style.display='block';}
 }
 
-/* ══ ADMIN ══ */
 function renderAdmin(){
   document.getElementById('app').innerHTML=`
   <header><div class="logo">🌿</div><div><h1>Rede Ester Carvalho</h1><p>Painel Administrativo</p></div>
@@ -214,7 +214,6 @@ function renderAdmin(){
 }
 
 function sair(){sessionStorage.removeItem('admin_ok');renderLogin();}
-
 function tab(btn,id){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('ativo'));
   document.querySelectorAll('.tela').forEach(t=>t.classList.remove('ativa'));
