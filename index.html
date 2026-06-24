@@ -117,12 +117,6 @@ const KEY='rede_ester_v2';
 const SENHA='RAFAEL';
 const SITE='https://tinyurl.com/3fmdcv6p';
 
-function baseUrl(){
-  const o=location.origin;
-  if(!o||o==='null'||o.startsWith('file'))return SITE;
-  return o+location.pathname;
-}
-
 function load(){try{return JSON.parse(localStorage.getItem(KEY))||[];}catch{return[];}}
 function save(d){try{localStorage.setItem(KEY,JSON.stringify(d));}catch{toast('Erro ao salvar',true);}}
 function adminLogado(){return sessionStorage.getItem('admin_ok')==='1';}
@@ -137,7 +131,8 @@ else if(painelId){renderPainelApoiador(painelId);}
 else if(adminLogado()){renderAdmin();}
 else{renderLogin();}
 
-function linkCadastro(r){return baseUrl()+'?cadastro=1'+(r?'&ref='+r:'');}
+function baseUrl(){return 'https://rafaelrps234-arch.github.io/ester-eleitores/';}
+function linkCadastro(r){return r?baseUrl()+'?cadastro=1&ref='+r:SITE;}
 function linkPainel(id){return baseUrl()+'?painel='+id;}
 
 function renderLogin(){
@@ -152,13 +147,11 @@ function renderLogin(){
   </div></div>`;
   setTimeout(()=>document.getElementById('inp-senha')?.focus(),100);
 }
-
 function entrar(){
   const v=document.getElementById('inp-senha').value.trim().toUpperCase();
   if(v===SENHA){sessionStorage.setItem('admin_ok','1');renderAdmin();}
   else{document.getElementById('login-erro').style.display='block';}
 }
-
 function renderAdmin(){
   document.getElementById('app').innerHTML=`
   <header><div class="logo">🌿</div><div><h1>Rede Ester Carvalho</h1><p>Painel Administrativo</p></div>
@@ -178,7 +171,7 @@ function renderAdmin(){
     </div>
     <div class="card">
       <h2>📱 QR Code Geral</h2>
-      <p style="font-size:.84rem;color:var(--cinza);margin-bottom:14px">Cada apoiador terá seu próprio link único para indicar pessoas.</p>
+      <p style="font-size:.84rem;color:var(--cinza);margin-bottom:14px">Escaneie para se cadastrar como apoiador.</p>
       <div id="qr-raiz" style="display:inline-block;padding:10px;background:#fff;border:2px solid var(--verde-claro);border-radius:8px"></div><br>
       <div style="font-size:.75rem;color:var(--cinza);word-break:break-all;margin:10px 0" id="link-raiz"></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
@@ -206,13 +199,11 @@ function renderAdmin(){
       <button class="btn btn-verde btn-full" onclick="salvarAdmin()">✅ Salvar Apoiador</button>
     </div>
   </div>`;
-  const linkR=linkCadastro(null);
-  document.getElementById('link-raiz').textContent=linkR;
-  new QRCode(document.getElementById('qr-raiz'),{text:linkR, width:280,height:280,colorDark:'#1a7a3c',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.H});
+  document.getElementById('link-raiz').textContent=SITE;
+  new QRCode(document.getElementById('qr-raiz'),{text:SITE,width:280,height:280,colorDark:'#1a7a3c',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
   atualizarStats();renderLista();populaSelectRef();
   setInterval(()=>{atualizarStats();renderLista();renderArvore();document.getElementById('sync-txt').textContent='Atualizado às '+new Date().toLocaleTimeString('pt-BR');},10000);
 }
-
 function sair(){sessionStorage.removeItem('admin_ok');renderLogin();}
 function tab(btn,id){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('ativo'));
@@ -300,7 +291,7 @@ function abrirModalQR(id){
   document.getElementById('modal-nome-apoiador').textContent='Link de '+ap.nome;
   document.getElementById('modal-link-texto').textContent=link;
   document.getElementById('modal-qrcode').innerHTML='';
-  new QRCode(document.getElementById('modal-qrcode'),{text:link,width:200,height:200,colorDark:'#1a7a3c',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.H});
+  new QRCode(document.getElementById('modal-qrcode'),{text:link,width:280,height:280,colorDark:'#1a7a3c',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
   document.getElementById('modal-qr').style.display='flex';
 }
 function fecharModal(e){if(e.target.id==='modal-qr')document.getElementById('modal-qr').style.display='none';}
@@ -310,14 +301,14 @@ function imprimirQR(){
   const img=document.querySelector('#modal-qrcode img'),link=document.getElementById('modal-link-texto').textContent,nome=document.getElementById('modal-nome-apoiador').textContent;
   if(!img){toast('QR ainda não gerado',true);return;}
   const w=window.open('','_blank');
-  w.document.write(`<html><head><title>QR</title><style>body{font-family:Arial;text-align:center;padding:40px}h1{color:#1a7a3c}p{color:#555;font-size:13px;word-break:break-all}img{border:3px solid #1a7a3c;border-radius:10px;padding:8px}</style></head><body><h1>🌿 Rede Ester Carvalho</h1><p>${nome}</p><img src="${img.src}" width="220"><p>${link}</p></body></html>`);
+  w.document.write(`<html><head><title>QR</title><style>body{font-family:Arial;text-align:center;padding:40px}h1{color:#1a7a3c}p{color:#555;font-size:13px;word-break:break-all}img{border:3px solid #1a7a3c;border-radius:10px;padding:8px}</style></head><body><h1>🌿 Rede Ester Carvalho</h1><p>${nome}</p><img src="${img.src}" width="250"><p>${link}</p></body></html>`);
   w.document.close();setTimeout(()=>w.print(),500);
 }
 function imprimirQRRaiz(){
-  const img=document.querySelector('#qr-raiz img'),link=document.getElementById('link-raiz').textContent;
+  const img=document.querySelector('#qr-raiz img'),link=SITE;
   if(!img){toast('QR ainda não gerado',true);return;}
   const w=window.open('','_blank');
-  w.document.write(`<html><head><title>QR Ester</title><style>body{font-family:Arial;text-align:center;padding:40px}h1{color:#1a7a3c}p{color:#555;font-size:13px;word-break:break-all}img{border:3px solid #1a7a3c;border-radius:10px;padding:8px}</style></head><body><h1>🌿 Rede Ester Carvalho</h1><p>Escaneie para se cadastrar como apoiador</p><img src="${img.src}" width="220"><p>${link}</p></body></html>`);
+  w.document.write(`<html><head><title>QR Ester</title><style>body{font-family:Arial;text-align:center;padding:40px}h1{color:#1a7a3c}p{color:#555;font-size:13px;word-break:break-all}img{border:3px solid #1a7a3c;border-radius:10px;padding:8px}</style></head><body><h1>🌿 Rede Ester Carvalho</h1><p>Escaneie para se cadastrar como apoiador</p><img src="${img.src}" width="250"><p>${link}</p></body></html>`);
   w.document.close();setTimeout(()=>w.print(),500);
 }
 function buildRefMap(d){const m={};d.forEach(a=>{if(a.refId)m[a.refId]=(m[a.refId]||0)+1;});return m;}
@@ -346,14 +337,14 @@ function renderPainelApoiador(id){
     </div>
     ${filhos.length?`<div class="mini-card"><h3>👥 Seus indicados (${filhos.length})</h3>${filhos.map(f=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f0f0f0"><div class="avatar" style="width:36px;height:36px;font-size:1rem">${(f.nome||'?')[0].toUpperCase()}</div><div><div style="font-weight:700;font-size:.9rem">${f.nome}</div><div style="font-size:.78rem;color:var(--cinza)">${f.fone||''} ${f.cidade?'· '+f.cidade:''}</div></div></div>`).join('')}</div>`:''}
   </div></div>`;
-  new QRCode(document.getElementById('qr-meu'),{text:meuLink,width:160,height:160,colorDark:'#1a7a3c',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.H});
+  new QRCode(document.getElementById('qr-meu'),{text:meuLink,width:240,height:240,colorDark:'#1a7a3c',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
 }
 function contarRede(id,d,v=new Set()){if(v.has(id))return 0;v.add(id);return d.filter(x=>x.refId===id).reduce((a,f)=>a+1+contarRede(f.id,d,v),0);}
 function compartilharWA(link,nome){window.open('https://wa.me/?text='+encodeURIComponent('Olá! Sou '+nome+' e quero contar com o seu apoio à Ester Carvalho.\n\nSe cadastre pelo meu link:\n'+link),'_blank');}
 function imprimirQRPainel(link,nome){
   const img=document.querySelector('#qr-meu img');if(!img){toast('QR carregando, tente novamente',true);return;}
   const w=window.open('','_blank');
-  w.document.write(`<html><head><title>Meu QR</title><style>body{font-family:Arial;text-align:center;padding:40px}h1{color:#1a7a3c}p{color:#555;font-size:13px;word-break:break-all}img{border:3px solid #1a7a3c;border-radius:10px;padding:8px}</style></head><body><h1>🌿 Rede Ester Carvalho</h1><p>Apoiador: <strong>${nome}</strong></p><img src="${img.src}" width="220"><p>${link}</p></body></html>`);
+  w.document.write(`<html><head><title>Meu QR</title><style>body{font-family:Arial;text-align:center;padding:40px}h1{color:#1a7a3c}p{color:#555;font-size:13px;word-break:break-all}img{border:3px solid #1a7a3c;border-radius:10px;padding:8px}</style></head><body><h1>🌿 Rede Ester Carvalho</h1><p>Apoiador: <strong>${nome}</strong></p><img src="${img.src}" width="250"><p>${link}</p></body></html>`);
   w.document.close();setTimeout(()=>w.print(),500);
 }
 function renderCadastroPublico(refId){
