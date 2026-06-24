@@ -208,7 +208,7 @@ function renderAdmin(){
   </div>`;
   const linkR=linkCadastro(null);
   document.getElementById('link-raiz').textContent=linkR;
-  new QRCode(document.getElementById('qr-raiz'),{text:linkR,width:180,height:180,colorDark:'#1a7a3c',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.H});
+  new QRCode(document.getElementById('qr-raiz'),{text:linkR, width:280,height:280,colorDark:'#1a7a3c',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.H});
   atualizarStats();renderLista();populaSelectRef();
   setInterval(()=>{atualizarStats();renderLista();renderArvore();document.getElementById('sync-txt').textContent='Atualizado às '+new Date().toLocaleTimeString('pt-BR');},10000);
 }
