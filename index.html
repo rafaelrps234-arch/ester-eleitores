@@ -93,6 +93,13 @@ header p{font-size:.8rem;opacity:.8}
 .login-card h1{color:var(--verde);font-size:1.3rem;margin-bottom:6px}
 .login-card p{color:var(--cinza);font-size:.85rem;margin-bottom:24px}
 .login-erro{color:#c0392b;font-size:.85rem;margin-top:10px;display:none}
+/* RANKING CIDADES */
+.cidade-bar-wrap{margin-bottom:10px}
+.cidade-bar-label{display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:4px}
+.cidade-bar-label .nome{font-weight:600}
+.cidade-bar-label .qtd{color:var(--verde);font-weight:700}
+.cidade-bar-bg{background:#f0f0f0;border-radius:20px;height:14px;overflow:hidden}
+.cidade-bar-fill{height:100%;background:linear-gradient(90deg,var(--verde),var(--verde-claro));border-radius:20px;transition:width .5s}
 @media(max-width:480px){.stats{grid-template-columns:1fr 1fr}.stat-card:last-child{grid-column:span 2}}
 </style>
 </head>
@@ -161,6 +168,7 @@ function renderAdmin(){
     <button class="tab ativo" onclick="tab(this,'painel')">📊 Painel</button>
     <button class="tab" onclick="tab(this,'lista')">👥 Apoiadores</button>
     <button class="tab" onclick="tab(this,'arvore')">🌳 Rede</button>
+    <button class="tab" onclick="tab(this,'mapa')">📍 Cidades DF</button>
     <button class="tab" onclick="tab(this,'cadAdm')">➕ Cadastrar</button>
   </div>
   <div id="tela-painel" class="tela ativa">
@@ -189,6 +197,13 @@ function renderAdmin(){
   <div id="tela-arvore" class="tela">
     <div class="card"><h2>🌳 Árvore da Rede</h2><p style="font-size:.82rem;color:var(--cinza);margin-bottom:14px">Clique num apoiador para ver seus indicados</p><div id="arvore"></div></div>
   </div>
+  <div id="tela-mapa" class="tela">
+    <div class="card">
+      <h2>📍 Apoiadores por Cidade do DF</h2>
+      <p style="font-size:.82rem;color:var(--cinza);margin-bottom:16px">Ranking das cidades com mais apoiadores cadastrados</p>
+      <div id="ranking-cidades"></div>
+    </div>
+  </div>
   <div id="tela-cadAdm" class="tela">
     <div class="card">
       <h2>➕ Cadastrar Apoiador</h2>
@@ -209,7 +224,10 @@ function tab(btn,id){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('ativo'));
   document.querySelectorAll('.tela').forEach(t=>t.classList.remove('ativa'));
   btn.classList.add('ativo');document.getElementById('tela-'+id).classList.add('ativa');
-  if(id==='lista')renderLista();if(id==='arvore')renderArvore();if(id==='cadAdm')populaSelectRef();
+  if(id==='lista')renderLista();
+  if(id==='arvore')renderArvore();
+  if(id==='cadAdm')populaSelectRef();
+  if(id==='mapa')renderCidades();
 }
 function atualizarStats(){
   const d=load(),hoje=new Date().toDateString(),semana=Date.now()-7*24*60*60*1000;
@@ -217,6 +235,57 @@ function atualizarStats(){
   document.getElementById('s-hoje').textContent=d.filter(a=>new Date(a.data).toDateString()===hoje).length;
   document.getElementById('s-semana').textContent=d.filter(a=>new Date(a.data)>=semana).length;
 }
+
+/* ══ RANKING CIDADES DF ══ */
+function renderCidades(){
+  const d=load();
+  const el=document.getElementById('ranking-cidades');
+  if(!d.length){el.innerHTML='<div class="vazio">Nenhum apoiador cadastrado ainda.</div>';return;}
+
+  // Conta por cidade
+  const contagem={};
+  d.forEach(a=>{
+    const cidade=(a.cidade||'').trim();
+    if(!cidade){return;}
+    const c=cidade.toUpperCase();
+    contagem[c]=(contagem[c]||0)+1;
+  });
+
+  if(!Object.keys(contagem).length){
+    el.innerHTML='<div class="vazio">Nenhum apoiador com cidade identificada ainda.<br><small>O CEP precisa ser preenchido no cadastro.</small></div>';
+    return;
+  }
+
+  // Ordena por quantidade
+  const sorted=Object.entries(contagem).sort((a,b)=>b[1]-a[1]);
+  const max=sorted[0][1];
+  const total=d.length;
+
+  // Emojis para top 3
+  const medalhas=['🥇','🥈','🥉'];
+
+  el.innerHTML=sorted.map(([cidade,qtd],i)=>{
+    const pct=Math.round((qtd/max)*100);
+    const pctTotal=Math.round((qtd/total)*100);
+    const medalha=i<3?medalhas[i]:'';
+    return`<div class="cidade-bar-wrap">
+      <div class="cidade-bar-label">
+        <span class="nome">${medalha} ${cidade}</span>
+        <span class="qtd">${qtd} apoiador${qtd>1?'es':''} (${pctTotal}%)</span>
+      </div>
+      <div class="cidade-bar-bg">
+        <div class="cidade-bar-fill" style="width:${pct}%"></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Total sem cidade
+  const semCidade=d.filter(a=>!a.cidade||!a.cidade.trim()).length;
+  if(semCidade>0){
+    el.innerHTML+=`<div style="margin-top:14px;font-size:.8rem;color:var(--cinza)">⚠️ ${semCidade} apoiador${semCidade>1?'es':''} sem cidade identificada (CEP não preenchido)</div>`;
+  }
+}
+
 function renderLista(){
   const d=load(),busca=(document.getElementById('busca')?.value||'').toLowerCase();
   const f=busca?d.filter(a=>(a.nome||'').toLowerCase().includes(busca)||(a.fone||'').includes(busca)||(a.cidade||'').toLowerCase().includes(busca)):d;
@@ -354,7 +423,7 @@ function renderCadastroPublico(refId){
     ${ind?`<div class="indicador-box">👤 Indicado por <strong>${ind.nome}</strong></div>`:''}
     <div class="campo"><label>Nome completo *</label><input id="p-nome" type="text" placeholder="Seu nome completo"></div>
     <div class="campo"><label>WhatsApp *</label><input id="p-fone" type="tel" placeholder="(00) 00000-0000" maxlength="15" oninput="mascaraTel(this)"></div>
-    <div class="campo"><label>CEP</label><input id="p-cep" type="text" placeholder="00000-000" maxlength="9" oninput="mascaraCep(this)" onblur="buscaCep('p')"><div class="endereco-auto" id="p-end"></div><div class="hint">Preenchido automaticamente</div></div>
+    <div class="campo"><label>CEP *</label><input id="p-cep" type="text" placeholder="00000-000" maxlength="9" oninput="mascaraCep(this)" onblur="buscaCep('p')"><div class="endereco-auto" id="p-end"></div><div class="hint">Necessário para identificar sua cidade</div></div>
     <button class="btn btn-verde btn-full" onclick="salvarPublico('${refId||''}')">🤝 Quero Apoiar!</button>
   </div></div>`;
 }
