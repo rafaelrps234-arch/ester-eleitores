@@ -4,442 +4,357 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Rede Ester Carvalho</title>
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F0F4FF;min-height:100vh;}
-.screen{display:none;}.screen.active{display:block;}
-.container{max-width:460px;margin:0 auto;padding:20px 16px 40px;}
-.header{text-align:center;padding:20px 0 16px;}
-.header img{width:110px;height:110px;border-radius:50%;object-fit:cover;object-position:top;border:4px solid #1B8F3A;margin:0 auto 12px;display:block;}
-.header h1{font-size:22px;font-weight:800;color:#1B8F3A;}
-.header p{font-size:13px;color:#666;margin-top:4px;}
-.tag{display:inline-block;background:#1A3A8F;color:#fff;font-size:11px;font-weight:700;padding:4px 14px;border-radius:99px;margin-top:8px;}
-.card{background:#fff;border-radius:20px;padding:20px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.08);}
-.field{margin-bottom:14px;}
-.field label{display:block;font-size:12px;font-weight:700;color:#555;margin-bottom:6px;text-transform:uppercase;}
-.field input,.field select{width:100%;padding:13px 14px;font-size:15px;font-family:inherit;border:2px solid #E8ECFF;border-radius:12px;outline:none;background:#FAFBFF;color:#222;}
-.field input:focus,.field select:focus{border-color:#1A3A8F;}
-.btn{width:100%;padding:15px;border:none;border-radius:13px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;}
-.btn-primary{background:linear-gradient(135deg,#1A3A8F,#2E5BB8);color:#fff;margin-bottom:10px;}
-.btn-outline{background:#fff;border:2px solid #1A3A8F;color:#1A3A8F;}
-.alert{padding:12px 14px;border-radius:12px;font-size:13px;margin-bottom:14px;display:none;font-weight:500;}
-.alert-success{background:#E8F5E9;color:#1B5E20;}
-.alert-error{background:#FFEBEE;color:#B71C1C;}
-.topbar{display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:16px;padding:14px 16px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.07);}
-.topbar h2{font-size:15px;font-weight:700;color:#1A3A8F;}
-.topbar p{font-size:12px;color:#888;}
-.btn-logout{padding:7px 14px;border:2px solid #E8ECFF;border-radius:99px;background:#fff;color:#666;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;}
-.tabs{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;padding-bottom:2px;}
-.tabs::-webkit-scrollbar{display:none;}
-.tab{padding:9px 16px;border:2px solid #E8ECFF;border-radius:99px;font-size:13px;font-weight:600;font-family:inherit;background:#fff;color:#666;cursor:pointer;white-space:nowrap;}
-.tab.active{background:#1A3A8F;color:#fff;border-color:#1A3A8F;}
-.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;}
-.stat{background:#fff;border-radius:16px;padding:14px 10px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.07);}
-.stat-num{font-size:28px;font-weight:800;color:#1A3A8F;}
-.stat-lbl{font-size:11px;color:#888;font-weight:600;text-transform:uppercase;}
-.ecard{background:#fff;border-radius:16px;padding:14px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;align-items:center;gap:12px;}
-.avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0;}
-.ecard-info{flex:1;min-width:0;}
-.ecard-nome{font-size:14px;font-weight:700;color:#1a1a2e;}
-.ecard-sub{font-size:12px;color:#888;margin-top:2px;}
-.badge{display:inline-block;font-size:10px;padding:3px 8px;border-radius:99px;font-weight:700;margin-right:4px;}
-.badge-blue{background:#E8ECFF;color:#1A3A8F;}
-.badge-green{background:#E8F5E9;color:#1B5E20;}
-.qr-wrap{text-align:center;padding:8px 0;}
-.qr-box{display:inline-block;padding:16px;border:3px solid #E8ECFF;border-radius:16px;margin-bottom:14px;}
-.link-box{background:#F0F4FF;border-radius:10px;padding:10px 14px;font-size:11px;color:#555;word-break:break-all;margin-bottom:14px;}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.copy-ok{font-size:12px;color:#1B5E20;margin-top:8px;text-align:center;font-weight:600;min-height:18px;}
-.tree-line{border-left:3px solid #E8ECFF;margin-left:20px;padding-left:14px;margin-top:4px;}
-.tree-row{display:flex;align-items:center;gap:10px;padding:8px 0;}
-.tree-toggle{padding:3px 10px;border:2px solid #E8ECFF;border-radius:8px;background:#fff;font-size:12px;color:#666;cursor:pointer;font-weight:700;font-family:inherit;}
-.tree-nome{font-size:14px;font-weight:700;}
-.tree-sub{font-size:11px;color:#888;}
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center;z-index:999;}
-.modal-bg.hidden{display:none;}
-.modal{background:#fff;border-radius:24px 24px 0 0;padding:28px 24px 36px;width:100%;max-width:460px;text-align:center;}
-.modal h3{font-size:18px;font-weight:800;color:#1A3A8F;margin-bottom:4px;}
-.modal-sub{font-size:13px;color:#888;margin-bottom:16px;}
-.modal-close{float:right;background:#F0F4FF;border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;margin-top:-4px;}
-.ind-box{background:#E8ECFF;border-radius:12px;padding:12px 14px;font-size:14px;color:#1A3A8F;font-weight:700;margin-bottom:16px;display:none;}
-.empty{text-align:center;color:#bbb;font-size:14px;padding:32px 0;}
-.rank-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #F0F4FF;}
-.entrar-link{text-align:center;font-size:13px;color:#aaa;margin-top:12px;}
+:root{--verde:#1a7a3c;--verde-escuro:#145e2e;--verde-claro:#e8f5ee;--amarelo:#f5c400;--cinza-claro:#f2f4f3;--cinza:#777;--texto:#1a1a1a;--sombra:0 2px 14px rgba(0,0,0,.09);--r:12px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--cinza-claro);color:var(--texto);min-height:100vh}
+header{background:var(--verde);color:#fff;padding:16px 20px;display:flex;align-items:center;gap:14px}
+header .logo{font-size:2rem}
+header h1{font-size:1.25rem;font-weight:800}
+header p{font-size:.8rem;opacity:.8}
+.tabs{display:flex;background:var(--verde-escuro);overflow-x:auto;padding:0 8px;gap:2px}
+.tab{padding:11px 18px;cursor:pointer;color:rgba(255,255,255,.65);font-size:.88rem;white-space:nowrap;border-bottom:3px solid transparent;background:none;border-top:none;border-left:none;border-right:none;transition:.2s}
+.tab.ativo{color:#fff;border-bottom-color:var(--amarelo);font-weight:700}
+.tela{display:none;padding:18px;max-width:960px;margin:0 auto}
+.tela.ativa{display:block}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+.stat-card{background:#fff;border-radius:var(--r);padding:16px 12px;text-align:center;box-shadow:var(--sombra);border-top:4px solid var(--verde)}
+.stat-card .num{font-size:2rem;font-weight:800;color:var(--verde)}
+.stat-card .lbl{font-size:.75rem;color:var(--cinza);margin-top:3px}
+.card{background:#fff;border-radius:var(--r);padding:20px;box-shadow:var(--sombra);margin-bottom:16px}
+.card h2{color:var(--verde);font-size:1.05rem;margin-bottom:12px}
+.btn{display:inline-block;padding:10px 20px;border-radius:8px;font-weight:700;font-size:.9rem;cursor:pointer;border:none;transition:.2s}
+.btn-verde{background:var(--verde);color:#fff}.btn-verde:hover{background:var(--verde-escuro)}
+.btn-amarelo{background:var(--amarelo);color:#1a1a1a}
+.btn-wa{background:#25d366;color:#fff;font-size:.8rem;padding:7px 12px;border-radius:7px;text-decoration:none;display:inline-block;border:none;cursor:pointer;font-weight:700}
+.btn-red{background:#fff;color:#c0392b;border:1.5px solid #c0392b;border-radius:7px;padding:6px 10px;font-size:.8rem;cursor:pointer}
+.btn-red:hover{background:#c0392b;color:#fff}
+.btn-full{width:100%;padding:13px;font-size:1rem}
+.campo{margin-bottom:14px}
+.campo label{display:block;font-weight:600;font-size:.88rem;margin-bottom:5px}
+.campo input,.campo select{width:100%;padding:10px 13px;border:1.5px solid #ddd;border-radius:8px;font-size:.95rem}
+.campo input:focus,.campo select:focus{outline:none;border-color:var(--verde)}
+.hint{font-size:.75rem;color:var(--cinza);margin-top:4px}
+.endereco-auto{margin-top:7px;padding:9px 13px;background:var(--verde-claro);border-radius:8px;font-size:.82rem;color:var(--verde-escuro);display:none}
+.apoiador-card{background:#fff;border-radius:var(--r);padding:13px 15px;margin-bottom:9px;box-shadow:var(--sombra);display:flex;align-items:center;gap:12px}
+.avatar{width:42px;height:42px;border-radius:50%;background:var(--verde);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;flex-shrink:0}
+.ainfo{flex:1;min-width:0}
+.ainfo .nome{font-weight:700;font-size:.97rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ainfo .det{font-size:.78rem;color:var(--cinza);margin-top:2px}
+.abadge{font-size:.72rem;background:var(--verde-claro);color:var(--verde);padding:2px 8px;border-radius:20px;font-weight:700;margin-top:4px;display:inline-block}
+.acoes{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end}
+.busca-wrap{display:flex;gap:8px;margin-bottom:12px}
+.busca-wrap input{flex:1;padding:10px 13px;border:1.5px solid #ddd;border-radius:8px;font-size:.92rem}
+.contador{font-size:.82rem;color:var(--cinza);margin-bottom:10px}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:9000;padding:16px}
+.modal{background:#fff;border-radius:16px;padding:28px 24px;max-width:380px;width:100%;text-align:center}
+.modal h3{color:var(--verde);font-size:1.15rem;margin-bottom:6px}
+.modal p{color:var(--cinza);font-size:.85rem;margin-bottom:16px}
+.modal-link{font-size:.75rem;color:var(--cinza);word-break:break-all;margin:10px 0;padding:8px;background:#f4f4f4;border-radius:6px}
+.modal-acoes{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.modal-close{position:absolute;top:12px;right:16px;font-size:1.5rem;cursor:pointer;color:var(--cinza);background:none;border:none}
+.arvore-nivel{padding-left:20px;border-left:2px solid var(--verde-claro);margin-left:10px}
+.arvore-no{margin:6px 0}
+.arvore-no .no-box{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#fff;border-radius:8px;box-shadow:0 1px 6px rgba(0,0,0,.07);cursor:pointer}
+.arvore-no .no-box:hover{background:var(--verde-claro)}
+.no-avatar{width:32px;height:32px;border-radius:50%;background:var(--verde);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;flex-shrink:0}
+.no-info{flex:1}
+.no-nome{font-weight:700;font-size:.88rem}
+.no-det{font-size:.74rem;color:var(--cinza)}
+.no-badge{font-size:.7rem;background:var(--amarelo);color:#1a1a1a;padding:1px 7px;border-radius:10px;font-weight:700}
+.arvore-filhos{margin-top:4px;display:none}
+.arvore-filhos.aberto{display:block}
+.painel-apoiador{min-height:100vh;background:linear-gradient(135deg,var(--verde) 0%,var(--verde-escuro) 100%);padding:20px}
+.painel-apoiador .inner{max-width:500px;margin:0 auto}
+.painel-apoiador .header-card{background:rgba(255,255,255,.15);border-radius:var(--r);padding:20px;text-align:center;color:#fff;margin-bottom:16px}
+.painel-apoiador .header-card h2{font-size:1.3rem;font-weight:800}
+.painel-apoiador .mini-card{background:#fff;border-radius:var(--r);padding:16px;margin-bottom:12px;box-shadow:var(--sombra)}
+.painel-apoiador .mini-card h3{color:var(--verde);font-size:.95rem;margin-bottom:10px}
+.tela-cadastro-pub{min-height:100vh;background:linear-gradient(135deg,var(--verde) 0%,var(--verde-escuro) 100%);display:flex;align-items:center;justify-content:center;padding:20px}
+.cadastro-card{background:#fff;border-radius:16px;padding:28px 24px;max-width:420px;width:100%}
+.cadastro-card .topo{text-align:center;margin-bottom:20px}
+.cadastro-card .topo .emoji{font-size:2.5rem;margin-bottom:6px}
+.cadastro-card .topo h1{color:var(--verde);font-size:1.3rem}
+.cadastro-card .topo p{color:var(--cinza);font-size:.85rem;margin-top:4px}
+.indicador-box{background:var(--verde-claro);border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:.85rem;color:var(--verde-escuro);font-weight:600}
+.sucesso-tela{text-align:center;padding:20px}
+.sucesso-tela .big{font-size:3rem;margin-bottom:12px}
+.sucesso-tela h2{color:var(--verde);font-size:1.3rem;margin-bottom:8px}
+.sucesso-tela p{color:var(--cinza);font-size:.9rem;margin-bottom:16px}
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--verde);color:#fff;padding:11px 22px;border-radius:30px;font-weight:600;font-size:.92rem;transition:transform .3s;z-index:9999;pointer-events:none}
+#toast.show{transform:translateX(-50%) translateY(0)}
+#toast.erro{background:#c0392b}
+.vazio{text-align:center;padding:36px 20px;color:var(--cinza);font-size:.92rem}
+.sync-info{font-size:.72rem;color:var(--cinza);text-align:right;margin-bottom:6px}
+@media(max-width:480px){.stats{grid-template-columns:1fr 1fr}.stat-card:last-child{grid-column:span 2}}
 </style>
 </head>
 <body>
-
-<div id="screen-pub" class="screen active">
-  <div class="container">
-    <div class="header">
-      <img src="data:image/jpeg;base64,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" alt="Ester">
-      <h1>Ester Carvalho</h1>
-      <p>Pré-Candidata Federal — Distrito Federal</p>
-      <span class="tag">União Brasil · DF</span>
-    </div>
-    <div class="card">
-      <div id="pub-ind" class="ind-box"></div>
-      <div id="pub-alert" class="alert"></div>
-      <div class="field"><label>Nome completo *</label><input id="p-nome" type="text" placeholder="Seu nome completo"></div>
-      <div class="field"><label>Telefone *</label><input id="p-tel" type="tel" placeholder="(61) 9 0000-0000"></div>
-      <div class="field"><label>Instagram</label><input id="p-insta" type="text" placeholder="@seu.usuario"></div>
-      <div class="field"><label>Senha *</label><input id="p-senha" type="password" placeholder="Crie uma senha para entrar depois"></div>
-      <button class="btn btn-primary" onclick="cadastrarPublico()">❤️ Quero apoiar Ester Carvalho!</button>
-    </div>
-    <div class="entrar-link">
-<button style="background:none;border:none;color:#1A3A8F;font-weight:700;font-size:13px;cursor:pointer;text-decoration:underline;font-family:inherit;padding:0;"
-onclick="var ss=document.querySelectorAll('.screen');for(var i=0;i<ss.length;i++){ss[i].classList.remove('active');}document.getElementById('screen-login').classList.add('active');">
-Entrar aqui
-</button></div>
-  </div>
-</div>
-
-<div id="screen-login" class="screen">
-  <div class="container">
-    <div class="header">
-      <img src="data:image/jpeg;base64,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" alt="Ester">
-      <h1>Ester Carvalho</h1>
-      <p>Rede de Eleitores — União Brasil DF</p>
-    </div>
-    <div class="card">
-      <div id="login-alert" class="alert"></div>
-      <div class="field"><label>Telefone</label><input id="l-tel" type="tel" placeholder="Seu telefone"></div>
-      <div class="field"><label>Senha</label><input id="l-senha" type="password" placeholder="Sua senha" onkeydown="if(event.key==='Enter')doLogin()"></div>
-      <button class="btn btn-primary" id="btn-login" onclick="doLogin()">Entrar →</button>
-      <button class="btn btn-outline" onclick="irCadastro()">← Fazer cadastro</button>
+<div id="app"></div>
+<div id="toast"></div>
+<div id="modal-qr" class="modal-bg" style="display:none" onclick="fecharModal(event)">
+  <div class="modal" style="position:relative">
+    <button class="modal-close" onclick="document.getElementById('modal-qr').style.display='none'">×</button>
+    <h3>📱 Link de Indicação</h3>
+    <p id="modal-nome-apoiador"></p>
+    <div id="modal-qrcode"></div>
+    <div class="modal-link" id="modal-link-texto"></div>
+    <div class="modal-acoes">
+      <button class="btn btn-verde" onclick="copiarLink()">📋 Copiar Link</button>
+      <button class="btn btn-amarelo" onclick="imprimirQR()">🖨️ Imprimir</button>
     </div>
   </div>
 </div>
-
-<div id="screen-main" class="screen">
-  <div class="container">
-    <div class="topbar">
-      <div><h2 id="tb-nome"></h2><p id="tb-sub"></p></div>
-      <button class="btn-logout" onclick="doLogout()">Sair</button>
-    </div>
-    <div class="tabs" id="tabs"></div>
-    <div id="tab-qr" style="display:none">
-      <div class="card">
-        <div class="qr-wrap">
-          <div class="qr-box" id="meu-qr"></div>
-          <h3 id="qr-nome" style="font-size:15px;font-weight:800;color:#1A3A8F;margin-bottom:4px"></h3>
-          <p id="qr-sub" style="font-size:13px;color:#888;margin-bottom:14px"></p>
-          <div class="link-box" id="qr-link"></div>
-          <div class="row2">
-            <button class="btn btn-primary" style="padding:13px;margin-bottom:0" onclick="baixarQR()">⬇️ Baixar QR</button>
-            <button class="btn btn-outline" style="padding:13px" onclick="copiarLink()">🔗 Copiar link</button>
-          </div>
-          <div class="copy-ok" id="copy-ok"></div>
-        </div>
-      </div>
-      <div class="card" style="font-size:13px;color:#888;line-height:1.8">
-        <b style="color:#1A3A8F;display:block;margin-bottom:6px">Como funciona?</b>
-        Compartilhe seu QR Code ou link. Quem cadastrar pelo seu link entra direto na sua rede!
-      </div>
-    </div>
-    <div id="tab-cad" style="display:none">
-      <div class="card">
-        <div id="cad-alert" class="alert"></div>
-        <div class="field"><label>Nome completo *</label><input id="c-nome" type="text" placeholder="Nome completo"></div>
-        <div class="field"><label>Telefone *</label><input id="c-tel" type="tel" placeholder="Somente números"></div>
-        <div class="field"><label>Instagram</label><input id="c-insta" type="text" placeholder="@usuario"></div>
-        <div class="field"><label>Senha *</label><input id="c-senha" type="text" placeholder="Senha para o eleitor entrar"></div>
-        <div id="field-ind" class="field" style="display:none"><label>Indicado por</label><select id="c-ind"></select></div>
-        <button class="btn btn-primary" id="btn-cad" onclick="cadastrar()">✅ Cadastrar eleitor</button>
-      </div>
-    </div>
-    <div id="tab-lista" style="display:none">
-      <input type="text" placeholder="🔍 Buscar por nome..." oninput="renderLista(this.value)"
-        style="width:100%;padding:13px 16px;font-size:14px;font-family:inherit;border:2px solid #E8ECFF;border-radius:13px;outline:none;background:#fff;margin-bottom:14px;">
-      <div id="lista"></div>
-    </div>
-    <div id="tab-arvore" style="display:none">
-      <div class="card">
-        <p style="font-size:13px;color:#888;margin-bottom:12px">Toque para expandir ou recolher.</p>
-        <div id="arvore"></div>
-      </div>
-    </div>
-    <div id="tab-painel" style="display:none">
-      <div class="stats">
-        <div class="stat"><div class="stat-num" id="s-total">0</div><div class="stat-lbl">Total</div></div>
-        <div class="stat"><div class="stat-num" id="s-diretos">0</div><div class="stat-lbl">Diretos</div></div>
-        <div class="stat"><div class="stat-num" id="s-ind">0</div><div class="stat-lbl">Indicados</div></div>
-      </div>
-      <div class="card">
-        <p style="font-size:14px;font-weight:700;color:#1A3A8F;margin-bottom:14px">🏆 Maiores indicadores</p>
-        <div id="ranking"></div>
-      </div>
-      <div class="card">
-        <p style="font-size:14px;font-weight:700;color:#1A3A8F;margin-bottom:14px">👥 Todos os eleitores</p>
-        <div id="todos"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="modal" class="modal-bg hidden" onclick="if(event.target===this)fecharModal()">
-  <div class="modal">
-    <button class="modal-close" onclick="fecharModal()">✕</button>
-    <h3 id="m-nome"></h3>
-    <div class="modal-sub" id="m-sub"></div>
-    <div style="padding:14px;border:3px solid #E8ECFF;border-radius:16px;display:inline-block;margin-bottom:14px" id="m-qr"></div>
-    <p style="font-size:12px;color:#aaa;margin-bottom:14px">Quem escanear entra como indicado de <b style="color:#1A3A8F" id="m-ind"></b></p>
-    <div class="row2">
-      <button class="btn btn-primary" style="padding:12px;margin-bottom:0" onclick="baixarModalQR()">⬇️ Baixar</button>
-      <button class="btn btn-outline" style="padding:12px" onclick="copiarModalLink()">🔗 Copiar</button>
-    </div>
-    <div class="copy-ok" id="m-copy"></div>
-  </div>
-</div>
-
 <script>
-var API='https://script.google.com/macros/s/AKfycbz1cUKE1gWo-U1Hje7SFJhWAr8ksztJOKlUbHy7_tyjn4oXvFhIfQw7jVJCI6TemBhq/exec';
-var ADMIN={tel:'985316511',senha:'rafael',nome:'Rafael',id:'admin'};
-var BASE='https://rafaelrps234-arch.github.io/ester-eleitores';
-var COLORS=[['#E8ECFF','#1A3A8F'],['#E8F5E9','#1B5E20'],['#FFF3E0','#E65100'],['#F3E5F5','#6A1B9A'],['#E0F7FA','#006064'],['#FCE4EC','#880E4F']];
-var db=[];
-var me=null;
-var modalId=null;
-var collapsed={};
-
-function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
-function ini(n){return n.trim().split(' ').slice(0,2).map(function(w){return w[0];}).join('').toUpperCase();}
-function avc(id){var i=Math.abs(Array.from(String(id)).reduce(function(a,c){return a+c.charCodeAt(0);},0))%COLORS.length;return COLORS[i];}
-function linkFor(id){return BASE+'?ind='+id;}
-
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
-  document.getElementById(id).classList.add('active');
+const KEY='rede_ester_v2';
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||[];}catch{return[];}}
+function save(d){try{localStorage.setItem(KEY,JSON.stringify(d));}catch{toast('Erro ao salvar',true);}}
+const params=new URLSearchParams(location.search);
+const modoCadastro=params.get('cadastro')==='1';
+const refId=params.get('ref')||null;
+const painelId=params.get('painel')||null;
+if(modoCadastro){renderCadastroPublico(refId);}else if(painelId){renderPainelApoiador(painelId);}else{renderAdmin();}
+function baseUrl(){return location.origin+location.pathname;}
+function linkCadastro(r){return baseUrl()+'?cadastro=1'+(r?'&ref='+r:'');}
+function linkPainel(id){return baseUrl()+'?painel='+id;}
+function renderAdmin(){
+  document.getElementById('app').innerHTML=`
+  <header><div class="logo">🌿</div><div><h1>Rede Ester Carvalho</h1><p>Painel Administrativo</p></div></header>
+  <div class="tabs">
+    <button class="tab ativo" onclick="tab(this,'painel')">📊 Painel</button>
+    <button class="tab" onclick="tab(this,'lista')">👥 Apoiadores</button>
+    <button class="tab" onclick="tab(this,'arvore')">🌳 Rede</button>
+    <button class="tab" onclick="tab(this,'cadAdm')">➕ Cadastrar</button>
+  </div>
+  <div id="tela-painel" class="tela ativa">
+    <div class="stats">
+      <div class="stat-card"><div class="num" id="s-total">0</div><div class="lbl">Total de Apoiadores</div></div>
+      <div class="stat-card"><div class="num" id="s-hoje">0</div><div class="lbl">Cadastrados Hoje</div></div>
+      <div class="stat-card"><div class="num" id="s-semana">0</div><div class="lbl">Esta Semana</div></div>
+    </div>
+    <div class="card">
+      <h2>📱 QR Code Geral</h2>
+      <p style="font-size:.84rem;color:var(--cinza);margin-bottom:14px">Cada apoiador terá seu próprio link único para indicar pessoas.</p>
+      <div id="qr-raiz" style="display:inline-block;padding:10px;background:#fff;border:2px solid var(--verde-claro);border-radius:8px"></div><br>
+      <div style="font-size:.75rem;color:var(--cinza);word-break:break-all;margin:10px 0" id="link-raiz"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+        <button class="btn btn-amarelo" onclick="copiarTexto(document.getElementById('link-raiz').textContent)">📋 Copiar Link</button>
+        <button class="btn btn-verde" onclick="imprimirQRRaiz()">🖨️ Imprimir</button>
+      </div>
+    </div>
+    <div class="sync-info" id="sync-txt">Sincronizando...</div>
+  </div>
+  <div id="tela-lista" class="tela">
+    <div class="busca-wrap"><input id="busca" type="text" placeholder="🔍 Buscar nome, telefone, cidade..." oninput="renderLista()"></div>
+    <div class="contador" id="contador"></div>
+    <div id="lista"></div>
+  </div>
+  <div id="tela-arvore" class="tela">
+    <div class="card"><h2>🌳 Árvore da Rede</h2><p style="font-size:.82rem;color:var(--cinza);margin-bottom:14px">Clique num apoiador para ver seus indicados</p><div id="arvore"></div></div>
+  </div>
+  <div id="tela-cadAdm" class="tela">
+    <div class="card">
+      <h2>➕ Cadastrar Apoiador</h2>
+      <div class="campo"><label>Nome completo *</label><input id="a-nome" type="text" placeholder="Nome do apoiador"></div>
+      <div class="campo"><label>WhatsApp *</label><input id="a-fone" type="tel" placeholder="(00) 00000-0000" maxlength="15" oninput="mascaraTel(this)"></div>
+      <div class="campo"><label>CEP</label><input id="a-cep" type="text" placeholder="00000-000" maxlength="9" oninput="mascaraCep(this)" onblur="buscaCep('a')"><div class="endereco-auto" id="a-end"></div></div>
+      <div class="campo"><label>Indicado por (opcional)</label><select id="a-ref"><option value="">— Nenhum (raiz da rede) —</option></select></div>
+      <button class="btn btn-verde btn-full" onclick="salvarAdmin()">✅ Salvar Apoiador</button>
+    </div>
+  </div>`;
+  const linkR=linkCadastro(null);
+  document.getElementById('link-raiz').textContent=linkR;
+  new QRCode(document.getElementById('qr-raiz'),{text:linkR,width:180,height:180,colorDark:'#1a7a3c',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.H});
+  atualizarStats();renderLista();populaSelectRef();
+  setInterval(()=>{atualizarStats();renderLista();renderArvore();document.getElementById('sync-txt').textContent='Atualizado às '+new Date().toLocaleTimeString('pt-BR');},10000);
 }
-function irLogin(){showScreen('screen-login');}
-function irCadastro(){showScreen('screen-pub');}
-function isAdmin(){return me&&me.id==='admin';}
-function getChildren(id){return db.filter(function(e){return e.indicadorId===id;});}
-
-function setAlert(id,msg,tipo){
-  var el=document.getElementById(id);
-  el.className='alert alert-'+tipo;
-  el.innerHTML=msg;
-  el.style.display='block';
-  if(tipo==='error')setTimeout(function(){el.style.display='none';},4000);
+function tab(btn,id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('ativo'));
+  document.querySelectorAll('.tela').forEach(t=>t.classList.remove('ativa'));
+  btn.classList.add('ativo');document.getElementById('tela-'+id).classList.add('ativa');
+  if(id==='lista')renderLista();if(id==='arvore')renderArvore();if(id==='cadAdm')populaSelectRef();
 }
-
-async function loadDB(){
-  try{
-    var r=await fetch(API+'?action=listar');
-    var d=await r.json();
-    if(d.ok)db=d.eleitores.map(function(e){return Object.assign({},e,{id:String(e.id),indicadorId:e.indicadorId?String(e.indicadorId):null});});
-  }catch(e){console.log('loadDB err',e);}
+function atualizarStats(){
+  const d=load(),hoje=new Date().toDateString(),semana=Date.now()-7*24*60*60*1000;
+  document.getElementById('s-total').textContent=d.length;
+  document.getElementById('s-hoje').textContent=d.filter(a=>new Date(a.data).toDateString()===hoje).length;
+  document.getElementById('s-semana').textContent=d.filter(a=>new Date(a.data)>=semana).length;
 }
-
-async function apiSave(novo){
-  try{
-    var r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({action:'cadastrar'},novo))});
-    return await r.json();
-  }catch(e){return {ok:false,msg:'Erro de conexão.'};}
-}
-
-async function cadastrarPublico(){
-  var nome=document.getElementById('p-nome').value.trim();
-  var tel=document.getElementById('p-tel').value.trim().replace(/\D/g,'');
-  var senha=document.getElementById('p-senha').value.trim();
-  var insta=document.getElementById('p-insta').value.trim().replace(/^@/,'');
-  if(!nome){setAlert('pub-alert','Informe seu nome.','error');return;}
-  if(!tel||tel.length<10){setAlert('pub-alert','Informe um telefone válido.','error');return;}
-  if(!senha){setAlert('pub-alert','Crie uma senha.','error');return;}
-  var btn=document.querySelector('#screen-pub .btn-primary');
-  btn.disabled=true;btn.textContent='Cadastrando...';
-  await loadDB();
-  if(db.find(function(e){return String(e.tel).replace(/\D/g,'')=== tel;})){
-    btn.disabled=false;btn.innerHTML='❤️ Quero apoiar Ester Carvalho!';
-    setAlert('pub-alert','Telefone já cadastrado.','error');return;
-  }
-  var indId=document.body.dataset.indId||null;
-  var novo={id:uid(),nome:nome,tel:tel,senha:senha,insta:insta,indicadorId:indId,dt:new Date().toLocaleDateString('pt-BR'),origem:'qrcode'};
-  var res=await apiSave(novo);
-  btn.disabled=false;btn.innerHTML='❤️ Quero apoiar Ester Carvalho!';
-  if(res.ok){
-    setAlert('pub-alert','✅ '+nome+', cadastro realizado! Clique em Entrar aqui para acessar.','success');
-    ['p-nome','p-tel','p-insta','p-senha'].forEach(function(id){document.getElementById(id).value='';});
-  }else{
-    setAlert('pub-alert',res.msg||'Erro ao cadastrar.','error');
-  }
-}
-
-async function doLogin(){
-  var tel=document.getElementById('l-tel').value.trim().replace(/\D/g,'');
-  var senha=document.getElementById('l-senha').value.trim();
-  if(!tel){setAlert('login-alert','Informe seu telefone.','error');return;}
-  if(!senha){setAlert('login-alert','Informe sua senha.','error');return;}
-  var btn=document.getElementById('btn-login');
-  btn.disabled=true;btn.textContent='Entrando...';
-  if(tel===ADMIN.tel&&senha===ADMIN.senha){
-    btn.disabled=false;btn.textContent='Entrar →';
-    me=Object.assign({},ADMIN);entrar();return;
-  }
-  await loadDB();
-  btn.disabled=false;btn.textContent='Entrar →';
-  var e=db.find(function(x){return String(x.tel).replace(/\D/g,'')=== tel;});
-  if(!e){setAlert('login-alert','Telefone não encontrado.','error');return;}
-  if(String(e.senha)!==String(senha)){setAlert('login-alert','Senha incorreta.','error');return;}
-  me=Object.assign({},e);entrar();
-}
-
-function doLogout(){
-  me=null;db=[];
-  document.getElementById('l-tel').value='';
-  document.getElementById('l-senha').value='';
-  document.getElementById('login-alert').style.display='none';
-  showScreen('screen-login');
-}
-
-function entrar(){
-  showScreen('screen-main');
-  document.getElementById('tb-nome').textContent=me.nome;
-  document.getElementById('tb-sub').textContent=isAdmin()?'Administrador — visão completa':'Minha rede de apoiadores';
-  var abas=[{id:'qr',l:'🔲 Meu QR'},{id:'cad',l:'➕ Cadastrar'},{id:'lista',l:'👥 Eleitores'},{id:'arvore',l:'🌳 Árvore'}];
-  if(isAdmin())abas.push({id:'painel',l:'📊 Painel'});
-  document.getElementById('tabs').innerHTML=abas.map(function(a){return '<button class="tab" id="tab-btn-'+a.id+'" onclick="showTab(''+a.id+'')">'+a.l+'</button>';}).join('');
-  document.getElementById('field-ind').style.display=isAdmin()?'':'none';
-  popularSelect();
-  showTab('qr');
-}
-
-function showTab(t){
-  ['qr','cad','lista','arvore','painel'].forEach(function(x){
-    var el=document.getElementById('tab-'+x);if(el)el.style.display=x===t?'':'none';
-    var btn=document.getElementById('tab-btn-'+x);if(btn)btn.classList.toggle('active',x===t);
-  });
-  if(t==='qr')renderQR();
-  if(t==='lista')renderLista('');
-  if(t==='arvore')renderArvore();
-  if(t==='painel')renderPainel();
-}
-
-function renderQR(){
-  var id=me.id;
-  var link=linkFor(id);
-  var filhos=getChildren(id).length;
-  document.getElementById('qr-nome').textContent=me.nome;
-  document.getElementById('qr-sub').textContent=filhos+' indicado'+(filhos!==1?'s':'')+' na sua rede';
-  document.getElementById('qr-link').textContent=link;
-  var box=document.getElementById('meu-qr');box.innerHTML='';
-  setTimeout(function(){new QRCode(box,{text:link,width:200,height:200,colorDark:'#1A3A8F',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.H});},100);
-}
-function baixarQR(){
-  setTimeout(function(){var c=document.querySelector('#meu-qr canvas');if(!c)return;var a=document.createElement('a');a.download='qr-ester.png';a.href=c.toDataURL();a.click();},200);
-}
-function copiarLink(){
-  navigator.clipboard.writeText(linkFor(me.id)).then(function(){var el=document.getElementById('copy-ok');el.textContent='✓ Link copiado!';setTimeout(function(){el.textContent='';},2500);});
-}
-
-function popularSelect(){
-  var sel=document.getElementById('c-ind');
-  sel.innerHTML='<option value="">— Cadastro direto —</option>';
-  db.forEach(function(e){sel.innerHTML+='<option value="'+e.id+'">'+e.nome+'</option>';});
-}
-
-async function cadastrar(){
-  var nome=document.getElementById('c-nome').value.trim();
-  var tel=document.getElementById('c-tel').value.trim().replace(/\D/g,'');
-  var senha=document.getElementById('c-senha').value.trim();
-  var insta=document.getElementById('c-insta').value.trim().replace(/^@/,'');
-  if(!nome||!tel||!senha){setAlert('cad-alert','Preencha todos os campos.','error');return;}
-  if(db.find(function(e){return String(e.tel).replace(/\D/g,'')=== tel;})){setAlert('cad-alert','Telefone já cadastrado.','error');return;}
-  var btn=document.getElementById('btn-cad');
-  btn.disabled=true;btn.textContent='Salvando...';
-  var indicadorId=isAdmin()?(document.getElementById('c-ind').value||null):me.id;
-  var novo={id:uid(),nome:nome,tel:tel,senha:senha,insta:insta,indicadorId:indicadorId,dt:new Date().toLocaleDateString('pt-BR')};
-  var res=await apiSave(novo);
-  btn.disabled=false;btn.textContent='✅ Cadastrar eleitor';
-  if(res.ok){
-    db.push(novo);popularSelect();
-    setAlert('cad-alert','✓ '+nome+' cadastrado!','success');
-    ['c-nome','c-tel','c-insta','c-senha'].forEach(function(id){document.getElementById(id).value='';});
-  }else{
-    setAlert('cad-alert',res.msg||'Erro.','error');
-  }
-}
-
-async function renderLista(q){
-  if(!db.length)await loadDB();
-  var vis=isAdmin()?db:(function(){var ids={};function walk(id){ids[id]=1;getChildren(id).forEach(function(c){walk(c.id);});}walk(me.id);return db.filter(function(e){return ids[e.id];});})();
-  var lista=q?vis.filter(function(e){return e.nome.toLowerCase().includes(q.toLowerCase());}):vis;
-  if(!lista.length){document.getElementById('lista').innerHTML='<div class="empty">Nenhum eleitor encontrado.</div>';return;}
-  document.getElementById('lista').innerHTML=lista.slice().reverse().map(function(e){
-    var ind=e.indicadorId?db.find(function(x){return x.id===e.indicadorId;}):null;
-    var filhos=getChildren(e.id).length;
-    var c=avc(e.id);
-    return '<div class="ecard"><div class="avatar" style="background:'+c[0]+';color:'+c[1]+'">'+ini(e.nome)+'</div><div class="ecard-info"><div class="ecard-nome">'+e.nome+'</div><div class="ecard-sub">'+e.tel+(e.insta?' · @'+e.insta:'')+(ind?' · Ind: '+ind.nome:'')+'</div><div style="margin-top:6px">'+(filhos?'<span class="badge badge-green">'+filhos+' ind.</span>':'')+(e.indicadorId?'':'<span class="badge badge-blue">Raiz</span>')+'</div></div><button onclick="abrirModal(''+e.id+'')" style="padding:8px 12px;border:2px solid #E8ECFF;border-radius:10px;background:#fff;color:#1A3A8F;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0">QR</button></div>';
+function renderLista(){
+  const d=load(),busca=(document.getElementById('busca')?.value||'').toLowerCase();
+  const f=busca?d.filter(a=>(a.nome||'').toLowerCase().includes(busca)||(a.fone||'').includes(busca)||(a.cidade||'').toLowerCase().includes(busca)):d;
+  document.getElementById('contador').textContent=f.length+' apoiador(es)';
+  const el=document.getElementById('lista');
+  if(!f.length){el.innerHTML='<div class="vazio">Nenhum apoiador cadastrado.</div>';return;}
+  const refs=buildRefMap(d);
+  el.innerHTML=[...f].sort((a,b)=>new Date(b.data)-new Date(a.data)).map(a=>{
+    const fNum=(a.fone||'').replace(/\D/g,'');
+    const local=[a.bairro,a.cidade,a.uf].filter(Boolean).join(', ')||'—';
+    const filhos=refs[a.id]||0;
+    const ind=a.refId?(d.find(x=>x.id===a.refId)?.nome||'?'):'Raiz';
+    return`<div class="apoiador-card">
+      <div class="avatar">${(a.nome||'?')[0].toUpperCase()}</div>
+      <div class="ainfo">
+        <div class="nome">${a.nome}</div>
+        <div class="det">📱 ${a.fone||'—'} | 📍 ${local}</div>
+        <div class="det">👤 ${ind} | 📅 ${new Date(a.data).toLocaleDateString('pt-BR')}</div>
+        <span class="abadge">🌿 ${filhos} indicado(s)</span>
+      </div>
+      <div class="acoes">
+        ${fNum?`<a class="btn-wa" href="https://wa.me/55${fNum}" target="_blank">WhatsApp</a>`:''}
+        <button class="btn btn-amarelo" style="font-size:.78rem;padding:7px 10px" onclick="abrirModalQR('${a.id}')">📱 QR</button>
+        <button class="btn-red" onclick="excluir('${a.id}')">✕</button>
+      </div>
+    </div>`;
   }).join('');
 }
-
-async function renderArvore(){
-  if(!db.length)await loadDB();
-  var vis=isAdmin()?db:(function(){var ids={};function walk(id){ids[id]=1;getChildren(id).forEach(function(c){walk(c.id);});}walk(me.id);return db.filter(function(e){return ids[e.id];});})();
-  var visSet={};vis.forEach(function(e){visSet[e.id]=1;});
-  var raizes=vis.filter(function(e){return !e.indicadorId||!visSet[e.indicadorId];});
-  document.getElementById('arvore').innerHTML=raizes.length?raizes.map(function(e){return renderNode(e,visSet);}).join(''):'<div class="empty">Nenhum eleitor.</div>';
+function renderArvore(){
+  const d=load(),el=document.getElementById('arvore');
+  if(!el)return;
+  if(!d.length){el.innerHTML='<div class="vazio">Nenhum apoiador cadastrado.</div>';return;}
+  el.innerHTML=d.filter(a=>!a.refId).map(a=>renderNo(a,d,0)).join('');
 }
-function renderNode(e,visSet){
-  var filhos=db.filter(function(x){return x.indicadorId===e.id&&visSet[x.id];});
-  var open=!collapsed[e.id];
-  var c=avc(e.id);
-  return '<div><div class="tree-row"><div class="avatar" style="width:36px;height:36px;font-size:12px;background:'+c[0]+';color:'+c[1]+'">'+ini(e.nome)+'</div><div style="flex:1"><div class="tree-nome">'+e.nome+'</div><div class="tree-sub">'+e.tel+'</div></div>'+(filhos.length?'<button class="tree-toggle" onclick="toggleNode(''+e.id+'')">'+(open?'▾':'▸')+' '+filhos.length+'</button>':'')+'</div>'+(filhos.length&&open?'<div class="tree-line">'+filhos.map(function(f){return renderNode(f,visSet);}).join('')+'</div>':'')+'</div>';
+function renderNo(a,todos,nivel){
+  const filhos=todos.filter(x=>x.refId===a.id),tem=filhos.length>0;
+  const local=[a.cidade,a.uf].filter(Boolean).join('/')||'';
+  return`<div class="arvore-no">
+    <div class="no-box" onclick="toggleNo('f-${a.id}',this)">
+      <div class="no-avatar">${(a.nome||'?')[0].toUpperCase()}</div>
+      <div class="no-info"><div class="no-nome">${a.nome}</div><div class="no-det">${local?local+' · ':''}${a.fone||''}</div></div>
+      ${tem?`<span class="no-badge">${filhos.length} 👥</span><span style="color:var(--cinza);font-size:.9rem">▶</span>`:''}
+    </div>
+    ${tem?`<div id="f-${a.id}" class="arvore-filhos"><div class="arvore-nivel">${filhos.map(f=>renderNo(f,todos,nivel+1)).join('')}</div></div>`:''}
+  </div>`;
 }
-function toggleNode(id){collapsed[id]=!collapsed[id];renderArvore();}
-
-function abrirModal(id){
-  modalId=id;
-  var e=db.find(function(x){return x.id===id;});if(!e)return;
-  var filhos=getChildren(id).length;
-  document.getElementById('m-nome').textContent=e.nome;
-  document.getElementById('m-sub').textContent=filhos+' indicado'+(filhos!==1?'s':'')+' · '+e.tel;
-  document.getElementById('m-ind').textContent=e.nome;
-  document.getElementById('m-copy').textContent='';
-  document.getElementById('modal').classList.remove('hidden');
-  var box=document.getElementById('m-qr');box.innerHTML='';
-  setTimeout(function(){new QRCode(box,{text:linkFor(id),width:180,height:180,colorDark:'#1A3A8F',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.H});},100);
+function toggleNo(id,box){
+  const el=document.getElementById(id);if(!el)return;
+  el.classList.toggle('aberto');
+  const arr=box.querySelector('span:last-child');
+  if(arr)arr.textContent=el.classList.contains('aberto')?'▼':'▶';
 }
-function fecharModal(){document.getElementById('modal').classList.add('hidden');}
-function baixarModalQR(){
-  var e=db.find(function(x){return x.id===modalId;});
-  setTimeout(function(){var c=document.querySelector('#m-qr canvas');if(!c)return;var a=document.createElement('a');a.download='qr-'+e.nome+'.png';a.href=c.toDataURL();a.click();},200);
+function populaSelectRef(){
+  const d=load(),sel=document.getElementById('a-ref');if(!sel)return;
+  sel.innerHTML='<option value="">— Nenhum (raiz da rede) —</option>'+[...d].sort((a,b)=>(a.nome||'').localeCompare(b.nome||'')).map(a=>`<option value="${a.id}">${a.nome}</option>`).join('');
 }
-function copiarModalLink(){
-  navigator.clipboard.writeText(linkFor(modalId)).then(function(){var el=document.getElementById('m-copy');el.textContent='✓ Link copiado!';setTimeout(function(){el.textContent='';},2000);});
+function salvarAdmin(){
+  const nome=document.getElementById('a-nome').value.trim(),fone=document.getElementById('a-fone').value.trim();
+  if(!nome){toast('Informe o nome',true);return;}if(!fone){toast('Informe o WhatsApp',true);return;}
+  const endEl=document.getElementById('a-end'),endD=endEl._dados||{};
+  const ap={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),nome,fone,cep:document.getElementById('a-cep').value.trim(),refId:document.getElementById('a-ref').value||null,bairro:endD.bairro||'',cidade:endD.cidade||'',uf:endD.uf||'',logradouro:endD.logradouro||'',data:new Date().toISOString()};
+  const d=load();d.push(ap);save(d);atualizarStats();
+  ['a-nome','a-fone','a-cep'].forEach(i=>document.getElementById(i).value='');
+  endEl.style.display='none';endEl._dados=null;document.getElementById('a-ref').value='';
+  toast('Apoiador cadastrado! ✅');
 }
-
-async function renderPainel(){
-  if(!db.length)await loadDB();
-  document.getElementById('s-total').textContent=db.length;
-  document.getElementById('s-diretos').textContent=db.filter(function(e){return !e.indicadorId;}).length;
-  document.getElementById('s-ind').textContent=db.filter(function(e){return e.indicadorId;}).length;
-  var rank=db.map(function(e){return Object.assign({},e,{qtd:getChildren(e.id).length});}).filter(function(e){return e.qtd>0;}).sort(function(a,b){return b.qtd-a.qtd;}).slice(0,10);
-  document.getElementById('ranking').innerHTML=rank.length?rank.map(function(e,i){var c=avc(e.id);return '<div class="rank-item"><div style="font-size:15px;font-weight:800;min-width:24px;color:#1A3A8F">'+(i+1)+'</div><div class="avatar" style="width:36px;height:36px;font-size:12px;background:'+c[0]+';color:'+c[1]+'">'+ini(e.nome)+'</div><div style="flex:1"><div style="font-size:14px;font-weight:700">'+e.nome+'</div><div style="font-size:12px;color:#888">'+e.tel+'</div></div><span class="badge badge-green">'+e.qtd+' ind.</span></div>';}).join(''):'<div class="empty">Nenhum indicador ainda.</div>';
-  document.getElementById('todos').innerHTML=db.length?db.map(function(e){var ind=e.indicadorId?db.find(function(x){return x.id===e.indicadorId;}):null;var c=avc(e.id);return '<div class="rank-item"><div class="avatar" style="width:36px;height:36px;font-size:12px;background:'+c[0]+';color:'+c[1]+'">'+ini(e.nome)+'</div><div style="flex:1"><div style="font-size:14px;font-weight:700">'+e.nome+'</div><div style="font-size:12px;color:#888">'+e.tel+(ind?' · ind. por '+ind.nome:'')+'</div></div><span style="font-size:11px;color:#ccc">'+e.dt+'</span></div>';}).join(''):'<div class="empty">Sem eleitores.</div>';
+function excluir(id){if(!confirm('Remover este apoiador?'))return;save(load().filter(a=>a.id!==id));renderLista();atualizarStats();toast('Removido');}
+let modalLinkAtual='';
+function abrirModalQR(id){
+  const d=load(),ap=d.find(a=>a.id===id);if(!ap)return;
+  const link=linkCadastro(id);modalLinkAtual=link;
+  document.getElementById('modal-nome-apoiador').textContent='Link de '+ap.nome;
+  document.getElementById('modal-link-texto').textContent=link;
+  document.getElementById('modal-qrcode').innerHTML='';
+  new QRCode(document.getElementById('modal-qrcode'),{text:link,width:200,height:200,colorDark:'#1a7a3c',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.H});
+  document.getElementById('modal-qr').style.display='flex';
 }
-
-window.addEventListener('hashchange', function(){
-  if(location.hash==='#login') showScreen('screen-login');
-  else if(location.hash==='') showScreen('screen-pub');
-});
-async function init(){
-  if(location.hash==='#login'){showScreen('screen-login');return;}
-  var p=new URLSearchParams(location.search);
-  var ind=p.get('ind');
-  var entrar=p.get('entrar');
-  if(entrar){showScreen('screen-login');return;}
-  if(ind){
-    document.body.dataset.indId=ind;
-    await loadDB();
-    var indicador=db.find(function(e){return e.id===ind;});
-    if(indicador){var box=document.getElementById('pub-ind');box.textContent='Indicado por: '+indicador.nome;box.style.display='block';}
-  }
-  showScreen('screen-pub');
+function fecharModal(e){if(e.target.id==='modal-qr')document.getElementById('modal-qr').style.display='none';}
+function copiarLink(){copiarTexto(modalLinkAtual);}
+function copiarTexto(txt){navigator.clipboard.writeText(txt).then(()=>toast('Link copiado!')).catch(()=>{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);toast('Link copiado!');});}
+function imprimirQR(){
+  const img=document.querySelector('#modal-qrcode img'),link=document.getElementById('modal-link-texto').textContent,nome=document.getElementById('modal-nome-apoiador').textContent;
+  if(!img){toast('QR ainda não gerado',true);return;}
+  const w=window.open('','_blank');
+  w.document.write(`<html><head><title>QR</title><style>body{font-family:Arial;text-align:center;padding:40px}h1{color:#1a7a3c}p{color:#555;font-size:13px;word-break:break-all}img{border:3px solid #1a7a3c;border-radius:10px;padding:8px}</style></head><body><h1>🌿 Rede Ester Carvalho</h1><p>${nome}</p><img src="${img.src}" width="220"><p>${link}</p></body></html>`);
+  w.document.close();setTimeout(()=>w.print(),500);
 }
-init();
+function imprimirQRRaiz(){
+  const img=document.querySelector('#qr-raiz img'),link=document.getElementById('link-raiz').textContent;
+  if(!img){toast('QR ainda não gerado',true);return;}
+  const w=window.open('','_blank');
+  w.document.write(`<html><head><title>QR Ester</title><style>body{font-family:Arial;text-align:center;padding:40px}h1{color:#1a7a3c}p{color:#555;font-size:13px;word-break:break-all}img{border:3px solid #1a7a3c;border-radius:10px;padding:8px}</style></head><body><h1>🌿 Rede Ester Carvalho</h1><p>Escaneie para se cadastrar como apoiador</p><img src="${img.src}" width="220"><p>${link}</p></body></html>`);
+  w.document.close();setTimeout(()=>w.print(),500);
+}
+function buildRefMap(d){const m={};d.forEach(a=>{if(a.refId)m[a.refId]=(m[a.refId]||0)+1;});return m;}
+function renderPainelApoiador(id){
+  const d=load(),ap=d.find(a=>a.id===id),app=document.getElementById('app');
+  if(!ap){app.innerHTML=`<div style="text-align:center;padding:60px 20px"><div style="font-size:3rem">⚠️</div><h2 style="color:#c0392b;margin-top:12px">Apoiador não encontrado</h2></div>`;return;}
+  const meuLink=linkCadastro(id),filhos=d.filter(x=>x.refId===id),ind=ap.refId?(d.find(x=>x.id===ap.refId)?.nome||'?'):'Rede Ester';
+  app.innerHTML=`<div class="painel-apoiador"><div class="inner">
+    <div class="header-card"><div style="font-size:2.5rem;margin-bottom:8px">🌿</div><h2>Olá, ${ap.nome.split(' ')[0]}!</h2><p>Seu painel de indicações — Rede Ester Carvalho</p></div>
+    <div class="mini-card"><h3>📊 Sua rede</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:center">
+        <div style="background:var(--verde-claro);border-radius:8px;padding:14px"><div style="font-size:1.8rem;font-weight:800;color:var(--verde)">${filhos.length}</div><div style="font-size:.75rem;color:var(--cinza)">Indicados diretos</div></div>
+        <div style="background:var(--verde-claro);border-radius:8px;padding:14px"><div style="font-size:1.8rem;font-weight:800;color:var(--verde)">${contarRede(id,d)}</div><div style="font-size:.75rem;color:var(--cinza)">Total na sua rede</div></div>
+      </div>
+      <div style="margin-top:10px;font-size:.8rem;color:var(--cinza)">Indicado por: <strong>${ind}</strong></div>
+    </div>
+    <div class="mini-card"><h3>📱 Seu link de indicação</h3>
+      <p style="font-size:.82rem;color:var(--cinza);margin-bottom:12px">Compartilhe com quem você quiser adicionar à sua rede</p>
+      <div style="background:#f4f4f4;border-radius:8px;padding:10px;font-size:.75rem;word-break:break-all;color:#444;margin-bottom:12px">${meuLink}</div>
+      <div id="qr-meu" style="display:inline-block;padding:8px;background:#fff;border:2px solid var(--verde-claro);border-radius:8px;margin-bottom:12px"></div><br>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-verde" onclick="copiarTexto('${meuLink}')">📋 Copiar Link</button>
+        <button class="btn btn-amarelo" onclick="compartilharWA('${meuLink}','${ap.nome}')">📤 Compartilhar</button>
+        <button class="btn" style="background:#f4f4f4" onclick="imprimirQRPainel('${meuLink}','${ap.nome}')">🖨️ Imprimir</button>
+      </div>
+    </div>
+    ${filhos.length?`<div class="mini-card"><h3>👥 Seus indicados (${filhos.length})</h3>${filhos.map(f=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f0f0f0"><div class="avatar" style="width:36px;height:36px;font-size:1rem">${(f.nome||'?')[0].toUpperCase()}</div><div><div style="font-weight:700;font-size:.9rem">${f.nome}</div><div style="font-size:.78rem;color:var(--cinza)">${f.fone||''} ${f.cidade?'· '+f.cidade:''}</div></div></div>`).join('')}</div>`:''}
+  </div></div>`;
+  new QRCode(document.getElementById('qr-meu'),{text:meuLink,width:160,height:160,colorDark:'#1a7a3c',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.H});
+}
+function contarRede(id,d,v=new Set()){if(v.has(id))return 0;v.add(id);return d.filter(x=>x.refId===id).reduce((a,f)=>a+1+contarRede(f.id,d,v),0);}
+function compartilharWA(link,nome){window.open('https://wa.me/?text='+encodeURIComponent('Olá! Sou '+nome+' e quero contar com o seu apoio à Ester Carvalho.\n\nSe cadastre pelo meu link:\n'+link),'_blank');}
+function imprimirQRPainel(link,nome){
+  const img=document.querySelector('#qr-meu img');if(!img){toast('QR carregando, tente novamente',true);return;}
+  const w=window.open('','_blank');
+  w.document.write(`<html><head><title>Meu QR</title><style>body{font-family:Arial;text-align:center;padding:40px}h1{color:#1a7a3c}p{color:#555;font-size:13px;word-break:break-all}img{border:3px solid #1a7a3c;border-radius:10px;padding:8px}</style></head><body><h1>🌿 Rede Ester Carvalho</h1><p>Apoiador: <strong>${nome}</strong></p><img src="${img.src}" width="220"><p>${link}</p></body></html>`);
+  w.document.close();setTimeout(()=>w.print(),500);
+}
+function renderCadastroPublico(refId){
+  const d=load(),ind=refId?d.find(a=>a.id===refId):null;
+  document.getElementById('app').innerHTML=`<div class="tela-cadastro-pub"><div class="cadastro-card" id="cad-card">
+    <div class="topo"><div class="emoji">🌿</div><h1>Apoie Ester Carvalho!</h1><p>Faça parte da nossa rede de apoiadores</p></div>
+    ${ind?`<div class="indicador-box">👤 Indicado por <strong>${ind.nome}</strong></div>`:''}
+    <div class="campo"><label>Nome completo *</label><input id="p-nome" type="text" placeholder="Seu nome completo"></div>
+    <div class="campo"><label>WhatsApp *</label><input id="p-fone" type="tel" placeholder="(00) 00000-0000" maxlength="15" oninput="mascaraTel(this)"></div>
+    <div class="campo"><label>CEP</label><input id="p-cep" type="text" placeholder="00000-000" maxlength="9" oninput="mascaraCep(this)" onblur="buscaCep('p')"><div class="endereco-auto" id="p-end"></div><div class="hint">Preenchido automaticamente</div></div>
+    <button class="btn btn-verde btn-full" onclick="salvarPublico('${refId||''}')">🤝 Quero Apoiar!</button>
+  </div></div>`;
+}
+function salvarPublico(refId){
+  const nome=document.getElementById('p-nome').value.trim(),fone=document.getElementById('p-fone').value.trim();
+  if(!nome){toast('Informe seu nome',true);return;}if(!fone){toast('Informe seu WhatsApp',true);return;}
+  const endEl=document.getElementById('p-end'),endD=endEl._dados||{};
+  const ap={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),nome,fone,cep:document.getElementById('p-cep').value.trim(),refId:refId||null,bairro:endD.bairro||'',cidade:endD.cidade||'',uf:endD.uf||'',logradouro:endD.logradouro||'',data:new Date().toISOString()};
+  const d=load();d.push(ap);save(d);
+  const meuLink=linkCadastro(ap.id),meuPainel=linkPainel(ap.id);
+  document.getElementById('cad-card').innerHTML=`<div class="sucesso-tela">
+    <div class="big">✅</div>
+    <h2>Obrigado, ${nome.split(' ')[0]}!</h2>
+    <p>Você agora faz parte da Rede Ester Carvalho!</p>
+    <div style="background:var(--verde-claro);border-radius:10px;padding:14px;margin:16px 0;font-size:.85rem;color:var(--verde-escuro)"><strong>Espalhe a rede!</strong><br>Compartilhe seu link para indicar mais pessoas.</div>
+    <div style="background:#f4f4f4;border-radius:8px;padding:10px;font-size:.73rem;word-break:break-all;color:#444;margin-bottom:14px">${meuLink}</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+      <button class="btn btn-verde" onclick="copiarTexto('${meuLink}')">📋 Copiar meu link</button>
+      <button class="btn btn-amarelo" onclick="compartilharWA('${meuLink}','${nome}')">📤 WhatsApp</button>
+    </div>
+    <div style="margin-top:16px"><a href="${meuPainel}" class="btn btn-verde" style="font-size:.85rem;padding:10px 18px">📊 Ver meu painel</a></div>
+  </div>`;
+}
+function mascaraTel(input){let v=input.value.replace(/\D/g,'').substring(0,11);if(v.length>10)v=v.replace(/^(\d{2})(\d{5})(\d{4}).*/,'($1) $2-$3');else if(v.length>6)v=v.replace(/^(\d{2})(\d{4})(\d*)/,'($1) $2-$3');else if(v.length>2)v=v.replace(/^(\d{2})(\d*)/,'($1) $2');input.value=v;}
+function mascaraCep(input){let v=input.value.replace(/\D/g,'').substring(0,8);if(v.length>5)v=v.replace(/^(\d{5})(\d*)/,'$1-$2');input.value=v;}
+async function buscaCep(pfx){
+  const cepIn=document.getElementById(pfx+'-cep'),endEl=document.getElementById(pfx+'-end'),cep=cepIn.value.replace(/\D/g,'');
+  if(cep.length!==8)return;endEl.style.display='block';endEl.textContent='🔍 Buscando...';endEl._dados=null;
+  try{const r=await fetch(`https://viacep.com.br/ws/${cep}/json/`),data=await r.json();
+    if(data.erro){endEl.textContent='⚠️ CEP não encontrado';return;}
+    endEl._dados={logradouro:data.logradouro,bairro:data.bairro,cidade:data.localidade,uf:data.uf};
+    endEl.textContent=`📍 ${[data.logradouro,data.bairro,data.localidade,data.uf].filter(Boolean).join(', ')}`;}
+  catch{endEl.textContent='⚠️ Erro ao buscar CEP';}
+}
+let _tt;
+function toast(msg,erro=false){const el=document.getElementById('toast');el.textContent=msg;el.className=erro?'erro show':'show';clearTimeout(_tt);_tt=setTimeout(()=>el.className='',3000);}
 </script>
 </body>
 </html>
