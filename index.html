@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -132,6 +132,14 @@ header{background:linear-gradient(135deg,var(--azul) 0%,var(--verde) 100%);color
 .cidade-bar-fill{height:100%;background:linear-gradient(90deg,var(--azul),var(--verde));border-radius:20px;transition:width .5s}
 .seg-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.2);color:#fff;font-size:.75rem;padding:4px 10px;border-radius:20px;font-weight:600}
 .loading{text-align:center;padding:40px;color:var(--cinza)}
+.ra-card{background:#fff;border-radius:var(--r);padding:14px 16px;margin-bottom:8px;box-shadow:var(--sombra);display:flex;align-items:center;gap:12px;cursor:pointer;transition:.2s}
+.ra-card:hover{background:var(--azul-claro)}
+.ra-num{font-size:1.4rem;font-weight:800;color:var(--azul);min-width:40px;text-align:center}
+.ra-info{flex:1}
+.ra-nome{font-weight:700;font-size:.95rem}
+.ra-bar{height:8px;background:#f0f0f0;border-radius:10px;margin-top:6px;overflow:hidden}
+.ra-bar-fill{height:100%;background:linear-gradient(90deg,var(--azul),var(--verde));border-radius:10px;transition:width .5s}
+.ra-pct{font-size:.75rem;color:var(--cinza);font-weight:600}
 @media(max-width:480px){.stats{grid-template-columns:1fr 1fr}.stat-card:last-child{grid-column:span 2}}
 </style>
 </head>
@@ -159,6 +167,106 @@ const TIMEOUT_MS=30*60*1000;
 const MAX_TENTATIVAS=3;
 const BLOQUEIO_MS=5*60*1000;
 const FOTO='https://rafaelrps234-arch.github.io/ester-eleitores/Imagem%20do%20WhatsApp%202026-06-24%20%C3%A0s%2020.36.03.jpeg';
+
+// ══ MAPEAMENTO BAIRRO → REGIÃO ADMINISTRATIVA DO DF ══
+const MAPA_RA = {
+  // Plano Piloto / Brasília
+  'ASA NORTE':'Plano Piloto','ASA SUL':'Plano Piloto','SETOR COMERCIAL SUL':'Plano Piloto',
+  'SETOR COMERCIAL NORTE':'Plano Piloto','LAGO SUL':'Lago Sul','LAGO NORTE':'Lago Norte',
+  'CRUZEIRO':'Cruzeiro','SUDOESTE':'Sudoeste/Octogonal','OCTOGONAL':'Sudoeste/Octogonal',
+  'CANDANGOLÂNDIA':'Candangolândia','PARK WAY':'Park Way',
+
+  // Taguatinga
+  'TAGUATINGA':'Taguatinga','TAGUATINGA NORTE':'Taguatinga','TAGUATINGA SUL':'Taguatinga',
+  'TAGUATINGA CENTRO':'Taguatinga','QNL':'Taguatinga','CNB':'Taguatinga',
+
+  // Ceilândia
+  'CEILÂNDIA':'Ceilândia','CEILANDIA':'Ceilândia','CEILÂNDIA NORTE':'Ceilândia',
+  'CEILÂNDIA SUL':'Ceilândia','CEILÂNDIA CENTRO':'Ceilândia','P SUL':'Ceilândia',
+  'P NORTE':'Ceilândia','QNN':'Ceilândia','QNM':'Ceilândia','QNO':'Ceilândia',
+  'QNP':'Ceilândia','QNQ':'Ceilândia','QNR':'Ceilândia','SETOR O':'Ceilândia',
+
+  // Samambaia
+  'SAMAMBAIA':'Samambaia','SAMAMBAIA NORTE':'Samambaia','SAMAMBAIA SUL':'Samambaia',
+  'QN':'Samambaia','QR':'Samambaia',
+
+  // Gama
+  'GAMA':'Gama','SETOR CENTRAL':'Gama','SETOR LESTE':'Gama','SETOR NORTE':'Gama',
+  'SETOR OESTE':'Gama','SETOR SUL':'Gama','SETOR INDUSTRIAL':'Gama',
+
+  // Sobradinho
+  'SOBRADINHO':'Sobradinho','SOBRADINHO II':'Sobradinho II',
+
+  // Planaltina
+  'PLANALTINA':'Planaltina','ARAPOANGA':'Planaltina','BURITIS':'Planaltina',
+
+  // Brazlândia
+  'BRAZLÂNDIA':'Brazlândia','BRAZLANDIA':'Brazlândia',
+
+  // Guará
+  'GUARÁ':'Guará','GUARA':'Guará','GUARÁ I':'Guará','GUARÁ II':'Guará',
+  'SETOR INDUSTRIAL DO GUARÁ':'Guará',
+
+  // Núcleo Bandeirante
+  'NÚCLEO BANDEIRANTE':'Núcleo Bandeirante','NUCLEO BANDEIRANTE':'Núcleo Bandeirante',
+
+  // Recanto das Emas
+  'RECANTO DAS EMAS':'Recanto das Emas',
+
+  // Riacho Fundo
+  'RIACHO FUNDO':'Riacho Fundo','RIACHO FUNDO I':'Riacho Fundo','RIACHO FUNDO II':'Riacho Fundo II',
+
+  // Santa Maria
+  'SANTA MARIA':'Santa Maria',
+
+  // São Sebastião
+  'SÃO SEBASTIÃO':'São Sebastião','SAO SEBASTIAO':'São Sebastião',
+
+  // Paranoá
+  'PARANOÁ':'Paranoá','PARANOA':'Paranoá','ITAPOÃ':'Paranoá',
+
+  // Águas Claras
+  'ÁGUAS CLARAS':'Águas Claras','AGUAS CLARAS':'Águas Claras',
+
+  // Vicente Pires
+  'VICENTE PIRES':'Vicente Pires',
+
+  // Estrutural
+  'ESTRUTURAL':'Estrutural','SCIA':'Estrutural',
+
+  // Fercal
+  'FERCAL':'Fercal',
+
+  // Sol Nascente
+  'SOL NASCENTE':'Sol Nascente/Pôr do Sol',
+
+  // Jardim Botânico
+  'JARDIM BOTÂNICO':'Jardim Botânico',
+
+  // SIA
+  'SIA':'SIA',
+
+  // Varjão
+  'VARJÃO':'Varjão',
+};
+
+function identificarRA(apoiador) {
+  const bairro = (apoiador.bairro || '').toUpperCase().trim();
+  const logradouro = (apoiador.logradouro || '').toUpperCase().trim();
+
+  // Tenta pelo bairro primeiro
+  for (const [chave, ra] of Object.entries(MAPA_RA)) {
+    if (bairro.includes(chave)) return ra;
+  }
+  // Tenta pelo logradouro
+  for (const [chave, ra] of Object.entries(MAPA_RA)) {
+    if (logradouro.includes(chave)) return ra;
+  }
+  // Se cidade for Brasília mas não identificou o bairro
+  const cidade = (apoiador.cidade || '').toUpperCase();
+  if (cidade.includes('BRASILIA') || cidade.includes('BRASÍLIA')) return 'Brasília (RA não identificada)';
+  return apoiador.cidade || 'Não identificada';
+}
 
 let _dados=[];
 let _db,_col,_fb;
@@ -242,7 +350,6 @@ function renderPublica(){
   </div>`;
 }
 
-// ══ LOGIN ADMIN ══
 function renderLogin(){
   const bloq=estaBloqueado();
   document.getElementById('app').innerHTML=`
@@ -272,7 +379,6 @@ function entrar(){
   }
 }
 
-// ══ LOGIN APOIADOR ══
 function renderLoginApoiador(painelIdDestino){
   document.getElementById('app').innerHTML=`
   <div class="login-tela"><div class="login-card">
@@ -292,19 +398,12 @@ async function entrarApoiador(destino){
   const fone=document.getElementById('ap-fone').value.replace(/\D/g,'');
   const senha=document.getElementById('ap-senha').value.trim();
   if(!fone||!senha){toast('Preencha todos os campos',true);return;}
-
   await carregarDados();
   const ap=_dados.find(a=>a.fone&&a.fone.replace(/\D/g,'')=== fone&&a.senha===senha);
-
-  if(ap){
-    sessionStorage.setItem('ap_logado',ap.id);
-    renderPainelApoiador(ap.id);
-  } else {
-    document.getElementById('ap-erro').style.display='block';
-  }
+  if(ap){sessionStorage.setItem('ap_logado',ap.id);renderPainelApoiador(ap.id);}
+  else{document.getElementById('ap-erro').style.display='block';}
 }
 
-// ══ ADMIN ══
 let _unsubscribe=null;
 
 function renderAdmin(){
@@ -324,7 +423,7 @@ function renderAdmin(){
     <button class="tab ativo" onclick="tab(this,'painel')">📊 Painel</button>
     <button class="tab" onclick="tab(this,'lista')">👥 Apoiadores</button>
     <button class="tab" onclick="tab(this,'arvore')">🌳 Rede</button>
-    <button class="tab" onclick="tab(this,'mapa')">📍 Cidades DF</button>
+    <button class="tab" onclick="tab(this,'mapa')">🗺️ Regiões DF</button>
     <button class="tab" onclick="tab(this,'cadAdm')">➕ Cadastrar</button>
   </div>
   <div id="tela-painel" class="tela ativa">
@@ -344,9 +443,9 @@ function renderAdmin(){
     </div>
     <div class="card" style="background:var(--azul-claro);border:1.5px solid var(--azul)">
       <h2>🔒 Links Importantes</h2>
-      <p style="font-size:.82rem;margin-bottom:8px"><strong>Link Admin:</strong></p>
-      <div style="background:#fff;border-radius:8px;padding:8px;font-size:.75rem;word-break:break-all;color:#444;margin-bottom:10px" id="link-admin-txt"></div>
-      <p style="font-size:.82rem;margin-bottom:8px"><strong>Link Login Apoiadores:</strong></p>
+      <p style="font-size:.82rem;margin-bottom:6px"><strong>Link Admin:</strong></p>
+      <div style="background:#fff;border-radius:8px;padding:8px;font-size:.75rem;word-break:break-all;color:#444;margin-bottom:8px" id="link-admin-txt"></div>
+      <p style="font-size:.82rem;margin-bottom:6px"><strong>Login Apoiadores:</strong></p>
       <div style="background:#fff;border-radius:8px;padding:8px;font-size:.75rem;word-break:break-all;color:#444;margin-bottom:10px" id="link-login-ap-txt"></div>
       <button class="btn btn-azul" onclick="copiarTexto(document.getElementById('link-admin-txt').textContent)">📋 Copiar Admin</button>
     </div>
@@ -358,10 +457,14 @@ function renderAdmin(){
     <div id="lista"><div class="loading">Carregando</div></div>
   </div>
   <div id="tela-arvore" class="tela">
-    <div class="card"><h2>🌳 Árvore da Rede</h2><div id="arvore"></div></div>
+    <div class="card"><h2>🌳 Árvore da Rede</h2><p style="font-size:.82rem;color:var(--cinza);margin-bottom:14px">Clique para expandir</p><div id="arvore"></div></div>
   </div>
   <div id="tela-mapa" class="tela">
-    <div class="card"><h2>📍 Cidades do DF</h2><div id="ranking-cidades"></div></div>
+    <div class="card">
+      <h2>🗺️ Apoiadores por Região Administrativa do DF</h2>
+      <p style="font-size:.82rem;color:var(--cinza);margin-bottom:16px">Identificado pelo bairro do CEP cadastrado</p>
+      <div id="ranking-ra"></div>
+    </div>
   </div>
   <div id="tela-cadAdm" class="tela">
     <div class="card">
@@ -396,7 +499,7 @@ function tab(btn,id){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('ativo'));
   document.querySelectorAll('.tela').forEach(t=>t.classList.remove('ativa'));
   btn.classList.add('ativo');document.getElementById('tela-'+id).classList.add('ativa');
-  if(id==='arvore')renderArvore();if(id==='mapa')renderCidades();if(id==='cadAdm')populaSelectRef();
+  if(id==='arvore')renderArvore();if(id==='mapa')renderRA();if(id==='cadAdm')populaSelectRef();
 }
 
 function atualizarStats(){
@@ -406,16 +509,50 @@ function atualizarStats(){
   document.getElementById('s-semana').textContent=_dados.filter(a=>new Date(a.data)>=semana).length;
 }
 
+function renderRA(){
+  const el=document.getElementById('ranking-ra');if(!el)return;
+  if(!_dados.length){el.innerHTML='<div class="vazio">Nenhum apoiador cadastrado.</div>';return;}
+
+  const contagem={};
+  _dados.forEach(a=>{
+    const ra=identificarRA(a);
+    contagem[ra]=(contagem[ra]||0)+1;
+  });
+
+  const sorted=Object.entries(contagem).sort((a,b)=>b[1]-a[1]);
+  const max=sorted[0][1],total=_dados.length,medalhas=['🥇','🥈','🥉'];
+
+  el.innerHTML=sorted.map(([ra,qtd],i)=>{
+    const pct=Math.round((qtd/max)*100),pctTotal=Math.round((qtd/total)*100);
+    return`<div class="ra-card">
+      <div class="ra-num">${qtd}</div>
+      <div class="ra-info">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span class="ra-nome">${i<3?medalhas[i]:''} ${ra}</span>
+          <span class="ra-pct">${pctTotal}%</span>
+        </div>
+        <div class="ra-bar"><div class="ra-bar-fill" style="width:${pct}%"></div></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const semId=_dados.filter(a=>identificarRA(a)==='Não identificada'||identificarRA(a).includes('não identificada')).length;
+  if(semId>0){
+    el.innerHTML+=`<div style="margin-top:12px;font-size:.8rem;color:var(--cinza);text-align:center">⚠️ ${semId} apoiador(es) sem região identificada — CEP não preenchido ou bairro não reconhecido</div>`;
+  }
+}
+
 function renderLista(){
   const busca=(document.getElementById('busca')?.value||'').toLowerCase();
-  const f=busca?_dados.filter(a=>(a.nome||'').toLowerCase().includes(busca)||(a.fone||'').includes(busca)||(a.cidade||'').toLowerCase().includes(busca)):_dados;
+  const f=busca?_dados.filter(a=>(a.nome||'').toLowerCase().includes(busca)||(a.fone||'').includes(busca)||(a.cidade||'').toLowerCase().includes(busca)||(a.bairro||'').toLowerCase().includes(busca)):_dados;
   document.getElementById('contador').textContent=f.length+' apoiador(es)';
   const el=document.getElementById('lista');
   if(!f.length){el.innerHTML='<div class="vazio">Nenhum apoiador.</div>';return;}
   const refs=buildRefMap(_dados);
   el.innerHTML=[...f].sort((a,b)=>new Date(b.data)-new Date(a.data)).map(a=>{
     const fNum=(a.fone||'').replace(/\D/g,'');
-    const local=[a.bairro,a.cidade,a.uf].filter(Boolean).join(', ')||'—';
+    const ra=identificarRA(a);
+    const local=ra!=='Não identificada'?ra:[a.bairro,a.cidade].filter(Boolean).join(', ')||'—';
     const filhos=refs[a.id]||0;
     const ind=a.refId?(_dados.find(x=>x.id===a.refId)?.nome||'?'):'Raiz';
     return`<div class="apoiador-card">
@@ -443,11 +580,11 @@ function renderArvore(){
 
 function renderNo(a,todos,nivel){
   const filhos=todos.filter(x=>x.refId===a.id),tem=filhos.length>0;
-  const local=[a.cidade,a.uf].filter(Boolean).join('/')||'';
+  const ra=identificarRA(a);
   return`<div class="arvore-no">
     <div class="no-box" onclick="toggleNo('f-${a.id}',this)">
       <div class="no-avatar">${(a.nome||'?')[0].toUpperCase()}</div>
-      <div class="no-info"><div class="no-nome">${a.nome}</div><div class="no-det">${local?local+' · ':''}${a.fone||''}</div></div>
+      <div class="no-info"><div class="no-nome">${a.nome}</div><div class="no-det">${ra} · ${a.fone||''}</div></div>
       ${tem?`<span class="no-badge">${filhos.length} 👥</span><span style="color:var(--cinza);font-size:.9rem">▶</span>`:''}
     </div>
     ${tem?`<div id="f-${a.id}" class="arvore-filhos"><div class="arvore-nivel">${filhos.map(f=>renderNo(f,todos,nivel+1)).join('')}</div></div>`:''}
@@ -461,23 +598,6 @@ function toggleNo(id,box){
   if(arr)arr.textContent=el.classList.contains('aberto')?'▼':'▶';
 }
 
-function renderCidades(){
-  const el=document.getElementById('ranking-cidades');if(!el)return;
-  if(!_dados.length){el.innerHTML='<div class="vazio">Nenhum apoiador.</div>';return;}
-  const contagem={};
-  _dados.forEach(a=>{const c=(a.cidade||'').trim().toUpperCase();if(c)contagem[c]=(contagem[c]||0)+1;});
-  if(!Object.keys(contagem).length){el.innerHTML='<div class="vazio">Nenhum com cidade.</div>';return;}
-  const sorted=Object.entries(contagem).sort((a,b)=>b[1]-a[1]);
-  const max=sorted[0][1],total=_dados.length,medalhas=['🥇','🥈','🥉'];
-  el.innerHTML=sorted.map(([cidade,qtd],i)=>{
-    const pct=Math.round((qtd/max)*100),pctTotal=Math.round((qtd/total)*100);
-    return`<div class="cidade-bar-wrap">
-      <div class="cidade-bar-label"><span class="nome">${i<3?medalhas[i]:''} ${cidade}</span><span class="qtd">${qtd} (${pctTotal}%)</span></div>
-      <div class="cidade-bar-bg"><div class="cidade-bar-fill" style="width:${pct}%"></div></div>
-    </div>`;
-  }).join('');
-}
-
 function populaSelectRef(){
   const sel=document.getElementById('a-ref');if(!sel)return;
   sel.innerHTML='<option value="">— Nenhum —</option>'+[..._dados].sort((a,b)=>(a.nome||'').localeCompare(b.nome||'')).map(a=>`<option value="${a.id}">${a.nome}</option>`).join('');
@@ -489,7 +609,7 @@ async function salvarAdmin(){
   const senha=document.getElementById('a-senha').value.trim();
   if(!nome){toast('Informe o nome',true);return;}
   if(!fone){toast('Informe o WhatsApp',true);return;}
-  if(!senha){toast('Crie uma senha para o apoiador',true);return;}
+  if(!senha){toast('Crie uma senha',true);return;}
   const endEl=document.getElementById('a-end'),endD=endEl._dados||{};
   const ap={nome,fone,senha,cep:document.getElementById('a-cep').value.trim(),refId:document.getElementById('a-ref').value||null,bairro:endD.bairro||'',cidade:endD.cidade||'',uf:endD.uf||'',logradouro:endD.logradouro||'',data:new Date().toISOString()};
   await salvarApoiador(ap);
@@ -561,7 +681,7 @@ async function renderPainelApoiador(id){
         <button class="btn btn-amarelo" onclick="compartilharWA('${meuLink}','${ap.nome}')">📤 WhatsApp</button>
       </div>
     </div>
-    ${filhos.length?`<div class="mini-card"><h3>👥 Meus indicados (${filhos.length})</h3>${filhos.map(f=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f0f0f0"><div class="avatar" style="width:36px;height:36px;font-size:1rem">${(f.nome||'?')[0].toUpperCase()}</div><div><div style="font-weight:700;font-size:.9rem">${f.nome}</div><div style="font-size:.78rem;color:var(--cinza)">${f.fone||''} ${f.cidade?'· '+f.cidade:''}</div></div></div>`).join('')}</div>`:'<div class="mini-card"><h3>👥 Meus indicados</h3><div class="vazio" style="padding:20px">Você ainda não indicou ninguém.<br>Compartilhe seu link!</div></div>'}
+    ${filhos.length?`<div class="mini-card"><h3>👥 Meus indicados (${filhos.length})</h3>${filhos.map(f=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f0f0f0"><div class="avatar" style="width:36px;height:36px;font-size:1rem">${(f.nome||'?')[0].toUpperCase()}</div><div><div style="font-weight:700;font-size:.9rem">${f.nome}</div><div style="font-size:.78rem;color:var(--cinza)">${f.fone||''} ${f.cidade?'· '+f.cidade:''}</div></div></div>`).join('')}</div>`:'<div class="mini-card"><h3>👥 Meus indicados</h3><div class="vazio" style="padding:20px">Nenhum indicado ainda.<br>Compartilhe seu link!</div></div>'}
   </div></div>`;
   new QRCode(document.getElementById('qr-meu'),{text:meuLink,width:240,height:240,colorDark:'#1a4fa0',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
 }
@@ -585,13 +705,7 @@ function renderCadastroPublico(refId){
     <button class="btn btn-azul btn-full" onclick="salvarPublico('${refId||''}')">🤝 Quero Apoiar!</button>
     <div style="margin-top:14px;text-align:center;font-size:.82rem;color:var(--cinza)">Já tem conta? <a href="${linkLoginApoiador()}" style="color:var(--azul);font-weight:600">Entrar aqui</a></div>
   </div></div>`;
-
-  if(refId){
-    carregarDados().then(()=>{
-      const ind=_dados.find(a=>a.id===refId);
-      if(ind)document.getElementById('ind-box').innerHTML=`<div class="indicador-box">👤 Indicado por <strong>${ind.nome}</strong></div>`;
-    });
-  }
+  if(refId){carregarDados().then(()=>{const ind=_dados.find(a=>a.id===refId);if(ind)document.getElementById('ind-box').innerHTML=`<div class="indicador-box">👤 Indicado por <strong>${ind.nome}</strong></div>`;});}
 }
 
 async function salvarPublico(refId){
@@ -612,14 +726,12 @@ async function salvarPublico(refId){
     <h2>Obrigado, ${nome.split(' ')[0]}!</h2>
     <p>Você agora faz parte da Rede Ester Carvalho!</p>
     <div style="background:var(--azul-claro);border-radius:10px;padding:12px;margin:12px 0;font-size:.85rem;color:var(--azul-escuro)">
-      <strong>Seu login:</strong><br>
-      📱 WhatsApp: ${fone}<br>
-      🔑 Senha: ${senha}
+      <strong>Seu login:</strong><br>📱 ${fone}<br>🔑 ${senha}
     </div>
-    <div style="background:var(--verde-claro);border-radius:10px;padding:14px;margin:12px 0;font-size:.85rem;color:var(--verde-escuro)"><strong>Espalhe a rede!</strong><br>Compartilhe seu link!</div>
+    <div style="background:var(--verde-claro);border-radius:10px;padding:12px;margin:12px 0;font-size:.85rem;color:var(--verde-escuro)"><strong>Espalhe a rede!</strong><br>Compartilhe seu link!</div>
     <div style="background:#f4f4f4;border-radius:8px;padding:10px;font-size:.73rem;word-break:break-all;color:#444;margin-bottom:14px">${meuLink}</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
-      <button class="btn btn-azul" onclick="copiarTexto('${meuLink}')">📋 Copiar link</button>
+      <button class="btn btn-azul" onclick="copiarTexto('${meuLink}')">📋 Copiar</button>
       <button class="btn btn-amarelo" onclick="compartilharWA('${meuLink}','${nome}')">📤 WhatsApp</button>
     </div>
     <div style="margin-top:16px"><a href="${meuPainel}" class="btn btn-verde" style="font-size:.85rem;padding:10px 18px">📊 Ver meu painel</a></div>
