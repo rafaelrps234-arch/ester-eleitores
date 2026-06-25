@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -8,7 +8,6 @@
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, onSnapshot, query, orderBy, where } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
-
 const firebaseConfig = {
   apiKey: "AIzaSyDm7kBZzrmQ749ysjkQv9DFrlx5VuuGGE0",
   authDomain: "campanha-ester.firebaseapp.com",
@@ -17,23 +16,15 @@ const firebaseConfig = {
   messagingSenderId: "1022309617273",
   appId: "1:1022309617273:web:6b258ba71a711f16a80ea8"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const COL = 'apoiadores';
-
-window._db = db;
-window._col = COL;
-window._firebase = { collection, addDoc, getDocs, deleteDoc, doc, onSnapshot, query, orderBy, where };
+window._db=db;window._col=COL;
+window._firebase={collection,addDoc,getDocs,deleteDoc,doc,onSnapshot,query,orderBy,where};
 window.dispatchEvent(new Event('firebaseReady'));
 </script>
 <style>
-:root{
-  --azul:#1a4fa0;--azul-escuro:#0d3070;--azul-claro:#e8f0ff;
-  --verde:#1a7a3c;--verde-escuro:#145e2e;--verde-claro:#e8f5ee;
-  --amarelo:#f5c400;--cinza-claro:#f2f4f3;--cinza:#777;--texto:#1a1a1a;
-  --sombra:0 2px 14px rgba(0,0,0,.09);--r:12px
-}
+:root{--azul:#1a4fa0;--azul-escuro:#0d3070;--azul-claro:#e8f0ff;--verde:#1a7a3c;--verde-escuro:#145e2e;--verde-claro:#e8f5ee;--amarelo:#f5c400;--cinza-claro:#f2f4f3;--cinza:#777;--texto:#1a1a1a;--sombra:0 2px 14px rgba(0,0,0,.09);--r:12px}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',Arial,sans-serif;background:var(--cinza-claro);color:var(--texto);min-height:100vh}
 header{background:linear-gradient(135deg,var(--azul) 0%,var(--verde) 100%);color:#fff;padding:0;overflow:hidden;box-shadow:var(--sombra)}
@@ -124,22 +115,15 @@ header{background:linear-gradient(135deg,var(--azul) 0%,var(--verde) 100%);color
 .login-card p{color:var(--cinza);font-size:.85rem;margin-bottom:24px}
 .login-erro{color:#c0392b;font-size:.85rem;margin-top:10px;display:none}
 .login-bloqueado{color:#c0392b;font-size:.85rem;margin-top:10px;font-weight:600;display:none}
-.cidade-bar-wrap{margin-bottom:10px}
-.cidade-bar-label{display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:4px}
-.cidade-bar-label .nome{font-weight:600}
-.cidade-bar-label .qtd{color:var(--azul);font-weight:700}
-.cidade-bar-bg{background:#f0f0f0;border-radius:20px;height:14px;overflow:hidden}
-.cidade-bar-fill{height:100%;background:linear-gradient(90deg,var(--azul),var(--verde));border-radius:20px;transition:width .5s}
-.seg-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.2);color:#fff;font-size:.75rem;padding:4px 10px;border-radius:20px;font-weight:600}
-.loading{text-align:center;padding:40px;color:var(--cinza)}
-.ra-card{background:#fff;border-radius:var(--r);padding:14px 16px;margin-bottom:8px;box-shadow:var(--sombra);display:flex;align-items:center;gap:12px;cursor:pointer;transition:.2s}
-.ra-card:hover{background:var(--azul-claro)}
+.ra-card{background:#f8f9ff;border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;border-left:4px solid var(--azul)}
 .ra-num{font-size:1.4rem;font-weight:800;color:var(--azul);min-width:40px;text-align:center}
 .ra-info{flex:1}
-.ra-nome{font-weight:700;font-size:.95rem}
-.ra-bar{height:8px;background:#f0f0f0;border-radius:10px;margin-top:6px;overflow:hidden}
-.ra-bar-fill{height:100%;background:linear-gradient(90deg,var(--azul),var(--verde));border-radius:10px;transition:width .5s}
-.ra-pct{font-size:.75rem;color:var(--cinza);font-weight:600}
+.ra-nome{font-weight:700;font-size:.92rem}
+.ra-bar{height:8px;background:#e0e7ff;border-radius:10px;margin-top:5px;overflow:hidden}
+.ra-bar-fill{height:100%;background:linear-gradient(90deg,var(--azul),var(--verde));border-radius:10px;transition:width .6s}
+.ra-pct{font-size:.78rem;color:var(--azul);font-weight:700}
+.seg-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.2);color:#fff;font-size:.75rem;padding:4px 10px;border-radius:20px;font-weight:600}
+.loading{text-align:center;padding:40px;color:var(--cinza)}
 @media(max-width:480px){.stats{grid-template-columns:1fr 1fr}.stat-card:last-child{grid-column:span 2}}
 </style>
 </head>
@@ -168,122 +152,57 @@ const MAX_TENTATIVAS=3;
 const BLOQUEIO_MS=5*60*1000;
 const FOTO='https://rafaelrps234-arch.github.io/ester-eleitores/Imagem%20do%20WhatsApp%202026-06-24%20%C3%A0s%2020.36.03.jpeg';
 
-// ══ MAPEAMENTO BAIRRO → REGIÃO ADMINISTRATIVA DO DF ══
-const MAPA_RA = {
-  // Plano Piloto / Brasília
+const MAPA_RA={
   'ASA NORTE':'Plano Piloto','ASA SUL':'Plano Piloto','SETOR COMERCIAL SUL':'Plano Piloto',
   'SETOR COMERCIAL NORTE':'Plano Piloto','LAGO SUL':'Lago Sul','LAGO NORTE':'Lago Norte',
   'CRUZEIRO':'Cruzeiro','SUDOESTE':'Sudoeste/Octogonal','OCTOGONAL':'Sudoeste/Octogonal',
   'CANDANGOLÂNDIA':'Candangolândia','PARK WAY':'Park Way',
-
-  // Taguatinga
-  'TAGUATINGA':'Taguatinga','TAGUATINGA NORTE':'Taguatinga','TAGUATINGA SUL':'Taguatinga',
-  'TAGUATINGA CENTRO':'Taguatinga','QNL':'Taguatinga','CNB':'Taguatinga',
-
-  // Ceilândia
-  'CEILÂNDIA':'Ceilândia','CEILANDIA':'Ceilândia','CEILÂNDIA NORTE':'Ceilândia',
-  'CEILÂNDIA SUL':'Ceilândia','CEILÂNDIA CENTRO':'Ceilândia','P SUL':'Ceilândia',
-  'P NORTE':'Ceilândia','QNN':'Ceilândia','QNM':'Ceilândia','QNO':'Ceilândia',
-  'QNP':'Ceilândia','QNQ':'Ceilândia','QNR':'Ceilândia','SETOR O':'Ceilândia',
-
-  // Samambaia
+  'TAGUATINGA':'Taguatinga','TAGUATINGA NORTE':'Taguatinga','TAGUATINGA SUL':'Taguatinga','TAGUATINGA CENTRO':'Taguatinga','QNL':'Taguatinga','CNB':'Taguatinga',
+  'CEILÂNDIA':'Ceilândia','CEILANDIA':'Ceilândia','CEILÂNDIA NORTE':'Ceilândia','CEILÂNDIA SUL':'Ceilândia','CEILÂNDIA CENTRO':'Ceilândia','P SUL':'Ceilândia','P NORTE':'Ceilândia','QNN':'Ceilândia','QNM':'Ceilândia','QNO':'Ceilândia','QNP':'Ceilândia','QNQ':'Ceilândia','QNR':'Ceilândia','SETOR O':'Ceilândia',
   'SAMAMBAIA':'Samambaia','SAMAMBAIA NORTE':'Samambaia','SAMAMBAIA SUL':'Samambaia',
-  'QN':'Samambaia','QR':'Samambaia',
-
-  // Gama
-  'GAMA':'Gama','SETOR CENTRAL':'Gama','SETOR LESTE':'Gama','SETOR NORTE':'Gama',
-  'SETOR OESTE':'Gama','SETOR SUL':'Gama','SETOR INDUSTRIAL':'Gama',
-
-  // Sobradinho
+  'GAMA':'Gama','SETOR CENTRAL':'Gama','SETOR LESTE':'Gama','SETOR NORTE':'Gama','SETOR OESTE':'Gama','SETOR SUL':'Gama','SETOR INDUSTRIAL':'Gama',
   'SOBRADINHO':'Sobradinho','SOBRADINHO II':'Sobradinho II',
-
-  // Planaltina
   'PLANALTINA':'Planaltina','ARAPOANGA':'Planaltina','BURITIS':'Planaltina',
-
-  // Brazlândia
   'BRAZLÂNDIA':'Brazlândia','BRAZLANDIA':'Brazlândia',
-
-  // Guará
   'GUARÁ':'Guará','GUARA':'Guará','GUARÁ I':'Guará','GUARÁ II':'Guará',
-  'SETOR INDUSTRIAL DO GUARÁ':'Guará',
-
-  // Núcleo Bandeirante
   'NÚCLEO BANDEIRANTE':'Núcleo Bandeirante','NUCLEO BANDEIRANTE':'Núcleo Bandeirante',
-
-  // Recanto das Emas
   'RECANTO DAS EMAS':'Recanto das Emas',
-
-  // Riacho Fundo
   'RIACHO FUNDO':'Riacho Fundo','RIACHO FUNDO I':'Riacho Fundo','RIACHO FUNDO II':'Riacho Fundo II',
-
-  // Santa Maria
   'SANTA MARIA':'Santa Maria',
-
-  // São Sebastião
   'SÃO SEBASTIÃO':'São Sebastião','SAO SEBASTIAO':'São Sebastião',
-
-  // Paranoá
   'PARANOÁ':'Paranoá','PARANOA':'Paranoá','ITAPOÃ':'Paranoá',
-
-  // Águas Claras
   'ÁGUAS CLARAS':'Águas Claras','AGUAS CLARAS':'Águas Claras',
-
-  // Vicente Pires
   'VICENTE PIRES':'Vicente Pires',
-
-  // Estrutural
   'ESTRUTURAL':'Estrutural','SCIA':'Estrutural',
-
-  // Fercal
   'FERCAL':'Fercal',
-
-  // Sol Nascente
   'SOL NASCENTE':'Sol Nascente/Pôr do Sol',
-
-  // Jardim Botânico
   'JARDIM BOTÂNICO':'Jardim Botânico',
-
-  // SIA
-  'SIA':'SIA',
-
-  // Varjão
-  'VARJÃO':'Varjão',
+  'SIA':'SIA','VARJÃO':'Varjão',
 };
 
-function identificarRA(apoiador) {
-  const bairro = (apoiador.bairro || '').toUpperCase().trim();
-  const logradouro = (apoiador.logradouro || '').toUpperCase().trim();
-
-  // Tenta pelo bairro primeiro
-  for (const [chave, ra] of Object.entries(MAPA_RA)) {
-    if (bairro.includes(chave)) return ra;
-  }
-  // Tenta pelo logradouro
-  for (const [chave, ra] of Object.entries(MAPA_RA)) {
-    if (logradouro.includes(chave)) return ra;
-  }
-  // Se cidade for Brasília mas não identificou o bairro
-  const cidade = (apoiador.cidade || '').toUpperCase();
-  if (cidade.includes('BRASILIA') || cidade.includes('BRASÍLIA')) return 'Brasília (RA não identificada)';
-  return apoiador.cidade || 'Não identificada';
+function identificarRA(a){
+  const b=(a.bairro||'').toUpperCase().trim();
+  const l=(a.logradouro||'').toUpperCase().trim();
+  for(const[k,v]of Object.entries(MAPA_RA)){if(b.includes(k))return v;}
+  for(const[k,v]of Object.entries(MAPA_RA)){if(l.includes(k))return v;}
+  const c=(a.cidade||'').toUpperCase();
+  if(c.includes('BRASILIA')||c.includes('BRASÍLIA'))return 'Brasília (RA não identificada)';
+  return a.cidade||'Não identificada';
 }
 
-let _dados=[];
-let _db,_col,_fb;
+let _dados=[],_db,_col,_fb;
 
 window.addEventListener('firebaseReady',()=>{
-  _db=window._db;_col=window._col;_fb=window._firebase;
-  iniciar();
+  _db=window._db;_col=window._col;_fb=window._firebase;iniciar();
 });
 
 function iniciar(){
-  const params=new URLSearchParams(location.search);
-  const modoCadastro=params.get('cadastro')==='1';
-  const refId=params.get('ref')||null;
-  const painelId=params.get('painel')||null;
-  const urlKey=params.get('admin')||'';
-  const loginAp=params.get('login')==='1';
-
+  const p=new URLSearchParams(location.search);
+  const modoCadastro=p.get('cadastro')==='1';
+  const refId=p.get('ref')||null;
+  const painelId=p.get('painel')||null;
+  const urlKey=p.get('admin')||'';
+  const loginAp=p.get('login')==='1';
   if(modoCadastro)renderCadastroPublico(refId);
   else if(loginAp)renderLoginApoiador();
   else if(painelId&&sessionStorage.getItem('ap_logado')===painelId)renderPainelApoiador(painelId);
@@ -293,28 +212,10 @@ function iniciar(){
   else renderPublica();
 }
 
-async function carregarDados(){
-  const snap=await _fb.getDocs(_fb.collection(_db,_col));
-  _dados=snap.docs.map(d=>({id:d.id,...d.data()}));
-  return _dados;
-}
-
-function ouvirDados(cb){
-  return _fb.onSnapshot(_fb.collection(_db,_col),snap=>{
-    _dados=snap.docs.map(d=>({id:d.id,...d.data()}));
-    cb(_dados);
-  });
-}
-
-async function salvarApoiador(ap){
-  const{id,...dados}=ap;
-  const ref=await _fb.addDoc(_fb.collection(_db,_col),dados);
-  return ref.id;
-}
-
-async function excluirApoiador(id){
-  await _fb.deleteDoc(_fb.doc(_db,_col,id));
-}
+async function carregarDados(){const s=await _fb.getDocs(_fb.collection(_db,_col));_dados=s.docs.map(d=>({id:d.id,...d.data()}));return _dados;}
+function ouvirDados(cb){return _fb.onSnapshot(_fb.collection(_db,_col),s=>{_dados=s.docs.map(d=>({id:d.id,...d.data()}));cb(_dados);});}
+async function salvarApoiador(ap){const{id,...d}=ap;const r=await _fb.addDoc(_fb.collection(_db,_col),d);return r.id;}
+async function excluirApoiador(id){await _fb.deleteDoc(_fb.doc(_db,_col,id));}
 
 function getTentativas(){try{return JSON.parse(localStorage.getItem('_t'))||{n:0,t:0};}catch{return{n:0,t:0};}}
 function setTentativas(n,t){localStorage.setItem('_t',JSON.stringify({n,t}));}
@@ -322,14 +223,11 @@ function estaBloqueado(){const t=getTentativas();if(t.n>=MAX_TENTATIVAS&&Date.no
 function registrarErro(){const t=getTentativas();setTentativas(t.n+1,Date.now());}
 function resetarTentativas(){setTentativas(0,0);}
 function adminLogado(){
-  const ok=sessionStorage.getItem('admin_ok')==='1';
-  const ts=parseInt(sessionStorage.getItem('admin_ts')||'0');
+  const ok=sessionStorage.getItem('admin_ok')==='1',ts=parseInt(sessionStorage.getItem('admin_ts')||'0');
   if(ok&&Date.now()-ts>TIMEOUT_MS){sessionStorage.removeItem('admin_ok');sessionStorage.removeItem('admin_ts');return false;}
-  if(ok)sessionStorage.setItem('admin_ts',Date.now());
-  return ok;
+  if(ok)sessionStorage.setItem('admin_ts',Date.now());return ok;
 }
 function setAdminLogado(){sessionStorage.setItem('admin_ok','1');sessionStorage.setItem('admin_ts',Date.now());}
-
 function baseUrl(){return 'https://rafaelrps234-arch.github.io/ester-eleitores/';}
 function linkCadastro(r){return r?baseUrl()+'?cadastro=1&ref='+r:SITE;}
 function linkPainel(id){return baseUrl()+'?painel='+id;}
@@ -355,8 +253,7 @@ function renderLogin(){
   document.getElementById('app').innerHTML=`
   <div class="login-tela"><div class="login-card">
     <img src="${FOTO}" onerror="this.style.display='none'">
-    <h1>Acesso Restrito</h1>
-    <p>Painel Administrativo</p>
+    <h1>Acesso Restrito</h1><p>Painel Administrativo</p>
     <div class="campo"><label>Senha</label><input id="inp-senha" type="password" placeholder="Digite a senha" onkeydown="if(event.key==='Enter')entrar()" ${bloq?'disabled':''}></div>
     <button class="btn btn-azul btn-full" onclick="entrar()" ${bloq?'disabled':''}>🔐 Entrar</button>
     <div class="login-erro" id="login-erro">Senha incorreta. Tentativas: <span id="rest">${MAX_TENTATIVAS-getTentativas().n}</span></div>
@@ -370,36 +267,29 @@ function entrar(){
   const bloq=estaBloqueado();if(bloq){toast('Acesso bloqueado!',true);return;}
   const v=document.getElementById('inp-senha').value.trim().toUpperCase();
   if(v===SENHA_ADMIN){resetarTentativas();setAdminLogado();renderAdmin();}
-  else{
-    registrarErro();
-    const t=getTentativas(),rest=MAX_TENTATIVAS-t.n;
-    document.getElementById('login-erro').style.display='block';
-    if(rest>0){document.getElementById('rest').textContent=rest;}
-    else{document.getElementById('login-erro').style.display='none';document.getElementById('login-bloq').style.display='block';setTimeout(()=>renderLogin(),BLOQUEIO_MS);}
-  }
+  else{registrarErro();const t=getTentativas(),rest=MAX_TENTATIVAS-t.n;document.getElementById('login-erro').style.display='block';if(rest>0){document.getElementById('rest').textContent=rest;}else{document.getElementById('login-erro').style.display='none';document.getElementById('login-bloq').style.display='block';setTimeout(()=>renderLogin(),BLOQUEIO_MS);}}
 }
 
-function renderLoginApoiador(painelIdDestino){
+function renderLoginApoiador(pid){
   document.getElementById('app').innerHTML=`
   <div class="login-tela"><div class="login-card">
     <img src="${FOTO}" onerror="this.style.display='none'">
-    <h1>Área do Apoiador</h1>
-    <p>Entre com seu WhatsApp e senha</p>
+    <h1>Área do Apoiador</h1><p>Entre com seu WhatsApp e senha</p>
     <div class="campo"><label>WhatsApp</label><input id="ap-fone" type="tel" placeholder="(00) 00000-0000" maxlength="15" oninput="mascaraTel(this)"></div>
-    <div class="campo"><label>Senha</label><input id="ap-senha" type="password" placeholder="Sua senha" onkeydown="if(event.key==='Enter')entrarApoiador('${painelIdDestino||''}')"></div>
-    <button class="btn btn-azul btn-full" onclick="entrarApoiador('${painelIdDestino||''}')">🔐 Entrar</button>
+    <div class="campo"><label>Senha</label><input id="ap-senha" type="password" placeholder="Sua senha" onkeydown="if(event.key==='Enter')entrarApoiador('${pid||''}')"></div>
+    <button class="btn btn-azul btn-full" onclick="entrarApoiador('${pid||''}')">🔐 Entrar</button>
     <div class="login-erro" id="ap-erro" style="display:none">WhatsApp ou senha incorretos.</div>
     <div style="margin-top:16px;font-size:.82rem;color:var(--cinza)">Ainda não tem conta? <a href="${SITE}" style="color:var(--azul);font-weight:600">Cadastre-se aqui</a></div>
   </div></div>`;
   setTimeout(()=>document.getElementById('ap-fone')?.focus(),100);
 }
 
-async function entrarApoiador(destino){
+async function entrarApoiador(dest){
   const fone=document.getElementById('ap-fone').value.replace(/\D/g,'');
   const senha=document.getElementById('ap-senha').value.trim();
   if(!fone||!senha){toast('Preencha todos os campos',true);return;}
   await carregarDados();
-  const ap=_dados.find(a=>a.fone&&a.fone.replace(/\D/g,'')=== fone&&a.senha===senha);
+  const ap=_dados.find(a=>a.fone&&a.fone.replace(/\D/g,'')===fone&&a.senha===senha);
   if(ap){sessionStorage.setItem('ap_logado',ap.id);renderPainelApoiador(ap.id);}
   else{document.getElementById('ap-erro').style.display='block';}
 }
@@ -433,6 +323,11 @@ function renderAdmin(){
       <div class="stat-card"><div class="num" id="s-semana">-</div><div class="lbl">Esta Semana</div></div>
     </div>
     <div class="card">
+      <h2>📍 Apoiadores por Região Administrativa</h2>
+      <p style="font-size:.82rem;color:var(--cinza);margin-bottom:14px">Atualizado em tempo real</p>
+      <div id="ra-resumo"></div>
+    </div>
+    <div class="card">
       <h2>📱 QR Code Geral</h2>
       <div id="qr-raiz" style="display:inline-block;padding:10px;background:#fff;border:2px solid var(--azul-claro);border-radius:8px"></div><br>
       <div style="font-size:.75rem;color:var(--cinza);word-break:break-all;margin:10px 0">${SITE}</div>
@@ -460,18 +355,14 @@ function renderAdmin(){
     <div class="card"><h2>🌳 Árvore da Rede</h2><p style="font-size:.82rem;color:var(--cinza);margin-bottom:14px">Clique para expandir</p><div id="arvore"></div></div>
   </div>
   <div id="tela-mapa" class="tela">
-    <div class="card">
-      <h2>🗺️ Apoiadores por Região Administrativa do DF</h2>
-      <p style="font-size:.82rem;color:var(--cinza);margin-bottom:16px">Identificado pelo bairro do CEP cadastrado</p>
-      <div id="ranking-ra"></div>
-    </div>
+    <div class="card"><h2>🗺️ Regiões Administrativas do DF</h2><p style="font-size:.82rem;color:var(--cinza);margin-bottom:16px">Identificado pelo bairro do CEP</p><div id="ranking-ra"></div></div>
   </div>
   <div id="tela-cadAdm" class="tela">
     <div class="card">
       <h2>➕ Cadastrar Apoiador</h2>
       <div class="campo"><label>Nome *</label><input id="a-nome" type="text" placeholder="Nome"></div>
       <div class="campo"><label>WhatsApp *</label><input id="a-fone" type="tel" placeholder="(00) 00000-0000" maxlength="15" oninput="mascaraTel(this)"></div>
-      <div class="campo"><label>Senha *</label><input id="a-senha" type="text" placeholder="Crie uma senha para o apoiador"></div>
+      <div class="campo"><label>Senha *</label><input id="a-senha" type="text" placeholder="Crie uma senha"></div>
       <div class="campo"><label>CEP</label><input id="a-cep" type="text" placeholder="00000-000" maxlength="9" oninput="mascaraCep(this)" onblur="buscaCep('a')"><div class="endereco-auto" id="a-end"></div></div>
       <div class="campo"><label>Indicado por</label><select id="a-ref"><option value="">— Nenhum —</option></select></div>
       <button class="btn btn-azul btn-full" onclick="salvarAdmin()">✅ Salvar</button>
@@ -485,7 +376,11 @@ function renderAdmin(){
   if(_unsubscribe)_unsubscribe();
   _unsubscribe=ouvirDados(dados=>{
     _dados=dados;
-    atualizarStats();renderLista();renderArvore();populaSelectRef();
+    atualizarStats();
+    renderRAResumo();
+    renderLista();
+    renderArvore();
+    populaSelectRef();
     document.getElementById('sync-txt').textContent='✅ '+dados.length+' apoiadores — '+new Date().toLocaleTimeString('pt-BR');
   });
 
@@ -509,42 +404,55 @@ function atualizarStats(){
   document.getElementById('s-semana').textContent=_dados.filter(a=>new Date(a.data)>=semana).length;
 }
 
-function renderRA(){
-  const el=document.getElementById('ranking-ra');if(!el)return;
-  if(!_dados.length){el.innerHTML='<div class="vazio">Nenhum apoiador cadastrado.</div>';return;}
-
+function buildRA(){
   const contagem={};
-  _dados.forEach(a=>{
-    const ra=identificarRA(a);
-    contagem[ra]=(contagem[ra]||0)+1;
-  });
+  _dados.forEach(a=>{const ra=identificarRA(a);contagem[ra]=(contagem[ra]||0)+1;});
+  return Object.entries(contagem).sort((a,b)=>b[1]-a[1]);
+}
 
-  const sorted=Object.entries(contagem).sort((a,b)=>b[1]-a[1]);
-  const max=sorted[0][1],total=_dados.length,medalhas=['🥇','🥈','🥉'];
-
+function renderRAResumo(){
+  const el=document.getElementById('ra-resumo');if(!el)return;
+  if(!_dados.length){el.innerHTML='<div class="vazio">Nenhum apoiador cadastrado ainda.</div>';return;}
+  const sorted=buildRA(),max=sorted[0][1],total=_dados.length,medalhas=['🥇','🥈','🥉'];
   el.innerHTML=sorted.map(([ra,qtd],i)=>{
     const pct=Math.round((qtd/max)*100),pctTotal=Math.round((qtd/total)*100);
     return`<div class="ra-card">
       <div class="ra-num">${qtd}</div>
       <div class="ra-info">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <span class="ra-nome">${i<3?medalhas[i]:''} ${ra}</span>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <span class="ra-nome">${i<3?medalhas[i]+' ':''}<strong>${ra}</strong></span>
+          <span class="ra-pct">${pctTotal}% do total</span>
+        </div>
+        <div class="ra-bar"><div class="ra-bar-fill" style="width:${pct}%"></div></div>
+      </div>
+    </div>`;
+  }).join('');
+  const semId=_dados.filter(a=>{const r=identificarRA(a);return r==='Não identificada'||r.includes('não identificada');}).length;
+  if(semId>0)el.innerHTML+=`<div style="margin-top:10px;font-size:.8rem;color:var(--cinza);text-align:center">⚠️ ${semId} sem região identificada</div>`;
+}
+
+function renderRA(){
+  const el=document.getElementById('ranking-ra');if(!el)return;
+  if(!_dados.length){el.innerHTML='<div class="vazio">Nenhum apoiador.</div>';return;}
+  const sorted=buildRA(),max=sorted[0][1],total=_dados.length,medalhas=['🥇','🥈','🥉'];
+  el.innerHTML=sorted.map(([ra,qtd],i)=>{
+    const pct=Math.round((qtd/max)*100),pctTotal=Math.round((qtd/total)*100);
+    return`<div class="ra-card">
+      <div class="ra-num">${qtd}</div>
+      <div class="ra-info">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <span class="ra-nome">${i<3?medalhas[i]+' ':''}<strong>${ra}</strong></span>
           <span class="ra-pct">${pctTotal}%</span>
         </div>
         <div class="ra-bar"><div class="ra-bar-fill" style="width:${pct}%"></div></div>
       </div>
     </div>`;
   }).join('');
-
-  const semId=_dados.filter(a=>identificarRA(a)==='Não identificada'||identificarRA(a).includes('não identificada')).length;
-  if(semId>0){
-    el.innerHTML+=`<div style="margin-top:12px;font-size:.8rem;color:var(--cinza);text-align:center">⚠️ ${semId} apoiador(es) sem região identificada — CEP não preenchido ou bairro não reconhecido</div>`;
-  }
 }
 
 function renderLista(){
   const busca=(document.getElementById('busca')?.value||'').toLowerCase();
-  const f=busca?_dados.filter(a=>(a.nome||'').toLowerCase().includes(busca)||(a.fone||'').includes(busca)||(a.cidade||'').toLowerCase().includes(busca)||(a.bairro||'').toLowerCase().includes(busca)):_dados;
+  const f=busca?_dados.filter(a=>(a.nome||'').toLowerCase().includes(busca)||(a.fone||'').includes(busca)||(a.bairro||'').toLowerCase().includes(busca)||(a.cidade||'').toLowerCase().includes(busca)):_dados;
   document.getElementById('contador').textContent=f.length+' apoiador(es)';
   const el=document.getElementById('lista');
   if(!f.length){el.innerHTML='<div class="vazio">Nenhum apoiador.</div>';return;}
@@ -604,12 +512,8 @@ function populaSelectRef(){
 }
 
 async function salvarAdmin(){
-  const nome=document.getElementById('a-nome').value.trim();
-  const fone=document.getElementById('a-fone').value.trim();
-  const senha=document.getElementById('a-senha').value.trim();
-  if(!nome){toast('Informe o nome',true);return;}
-  if(!fone){toast('Informe o WhatsApp',true);return;}
-  if(!senha){toast('Crie uma senha',true);return;}
+  const nome=document.getElementById('a-nome').value.trim(),fone=document.getElementById('a-fone').value.trim(),senha=document.getElementById('a-senha').value.trim();
+  if(!nome){toast('Informe o nome',true);return;}if(!fone){toast('Informe o WhatsApp',true);return;}if(!senha){toast('Crie uma senha',true);return;}
   const endEl=document.getElementById('a-end'),endD=endEl._dados||{};
   const ap={nome,fone,senha,cep:document.getElementById('a-cep').value.trim(),refId:document.getElementById('a-ref').value||null,bairro:endD.bairro||'',cidade:endD.cidade||'',uf:endD.uf||'',logradouro:endD.logradouro||'',data:new Date().toISOString()};
   await salvarApoiador(ap);
@@ -618,11 +522,7 @@ async function salvarAdmin(){
   toast('Apoiador cadastrado! ✅');
 }
 
-async function excluir(id){
-  if(!confirm('Remover?'))return;
-  await excluirApoiador(id);toast('Removido');
-}
-
+async function excluir(id){if(!confirm('Remover?'))return;await excluirApoiador(id);toast('Removido');}
 function buildRefMap(d){const m={};d.forEach(a=>{if(a.refId)m[a.refId]=(m[a.refId]||0)+1;});return m;}
 
 let modalLinkAtual='';
@@ -646,8 +546,7 @@ function imprimirQR(){
   w.document.close();setTimeout(()=>w.print(),500);
 }
 function imprimirQRRaiz(){
-  const img=document.querySelector('#qr-raiz img');
-  if(!img){toast('QR ainda não gerado',true);return;}
+  const img=document.querySelector('#qr-raiz img');if(!img){toast('QR ainda não gerado',true);return;}
   const w=window.open('','_blank');
   w.document.write(`<html><head><title>QR Ester</title><style>body{font-family:Arial;text-align:center;padding:40px}h1{color:#1a4fa0}p{color:#555;font-size:13px;word-break:break-all}img{border:3px solid #1a4fa0;border-radius:10px;padding:8px}</style></head><body><h1>Rede Ester Carvalho</h1><p>Escaneie para se cadastrar</p><img src="${img.src}" width="250"><p>${SITE}</p></body></html>`);
   w.document.close();setTimeout(()=>w.print(),500);
@@ -656,8 +555,7 @@ function imprimirQRRaiz(){
 async function renderPainelApoiador(id){
   document.getElementById('app').innerHTML='<div class="loading" style="padding:60px;text-align:center">Carregando</div>';
   await carregarDados();
-  const ap=_dados.find(a=>a.id===id);
-  const app=document.getElementById('app');
+  const ap=_dados.find(a=>a.id===id),app=document.getElementById('app');
   if(!ap){app.innerHTML=`<div style="text-align:center;padding:60px"><div style="font-size:3rem">⚠️</div><h2 style="color:#c0392b">Apoiador não encontrado</h2></div>`;return;}
   const meuLink=linkCadastro(id),filhos=_dados.filter(x=>x.refId===id),ind=ap.refId?(_dados.find(x=>x.id===ap.refId)?.nome||'?'):'Rede Ester';
   app.innerHTML=`<div class="painel-apoiador"><div class="inner">
@@ -692,11 +590,7 @@ function compartilharWA(link,nome){window.open('https://wa.me/?text='+encodeURIC
 
 function renderCadastroPublico(refId){
   document.getElementById('app').innerHTML=`<div class="tela-cadastro-pub"><div class="cadastro-card" id="cad-card">
-    <div class="topo">
-      <img src="${FOTO}" onerror="this.style.display='none'">
-      <h1>Apoie Ester Carvalho!</h1>
-      <p>🐾 Política se faz com amor</p>
-    </div>
+    <div class="topo"><img src="${FOTO}" onerror="this.style.display='none'"><h1>Apoie Ester Carvalho!</h1><p>🐾 Política se faz com amor</p></div>
     <div id="ind-box"></div>
     <div class="campo"><label>Nome completo *</label><input id="p-nome" type="text" placeholder="Seu nome completo"></div>
     <div class="campo"><label>WhatsApp *</label><input id="p-fone" type="tel" placeholder="(00) 00000-0000" maxlength="15" oninput="mascaraTel(this)"></div>
@@ -709,12 +603,8 @@ function renderCadastroPublico(refId){
 }
 
 async function salvarPublico(refId){
-  const nome=document.getElementById('p-nome').value.trim();
-  const fone=document.getElementById('p-fone').value.trim();
-  const senha=document.getElementById('p-senha').value.trim();
-  if(!nome){toast('Informe seu nome',true);return;}
-  if(!fone){toast('Informe seu WhatsApp',true);return;}
-  if(!senha||senha.length<4){toast('Crie uma senha com mínimo 4 caracteres',true);return;}
+  const nome=document.getElementById('p-nome').value.trim(),fone=document.getElementById('p-fone').value.trim(),senha=document.getElementById('p-senha').value.trim();
+  if(!nome){toast('Informe seu nome',true);return;}if(!fone){toast('Informe seu WhatsApp',true);return;}if(!senha||senha.length<4){toast('Crie uma senha com mínimo 4 caracteres',true);return;}
   const endEl=document.getElementById('p-end'),endD=endEl._dados||{};
   const ap={nome,fone,senha,cep:document.getElementById('p-cep').value.trim(),refId:refId||null,bairro:endD.bairro||'',cidade:endD.cidade||'',uf:endD.uf||'',logradouro:endD.logradouro||'',data:new Date().toISOString()};
   const novoId=await salvarApoiador(ap);
@@ -722,12 +612,8 @@ async function salvarPublico(refId){
   const meuLink=linkCadastro(novoId),meuPainel=linkPainel(novoId);
   document.getElementById('cad-card').innerHTML=`<div class="sucesso-tela">
     <img src="${FOTO}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--azul);margin-bottom:12px" onerror="this.style.display='none'">
-    <div class="big">✅</div>
-    <h2>Obrigado, ${nome.split(' ')[0]}!</h2>
-    <p>Você agora faz parte da Rede Ester Carvalho!</p>
-    <div style="background:var(--azul-claro);border-radius:10px;padding:12px;margin:12px 0;font-size:.85rem;color:var(--azul-escuro)">
-      <strong>Seu login:</strong><br>📱 ${fone}<br>🔑 ${senha}
-    </div>
+    <div class="big">✅</div><h2>Obrigado, ${nome.split(' ')[0]}!</h2><p>Você agora faz parte da Rede Ester Carvalho!</p>
+    <div style="background:var(--azul-claro);border-radius:10px;padding:12px;margin:12px 0;font-size:.85rem;color:var(--azul-escuro)"><strong>Seu login:</strong><br>📱 ${fone}<br>🔑 ${senha}</div>
     <div style="background:var(--verde-claro);border-radius:10px;padding:12px;margin:12px 0;font-size:.85rem;color:var(--verde-escuro)"><strong>Espalhe a rede!</strong><br>Compartilhe seu link!</div>
     <div style="background:#f4f4f4;border-radius:8px;padding:10px;font-size:.73rem;word-break:break-all;color:#444;margin-bottom:14px">${meuLink}</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
