@@ -24,7 +24,7 @@ window._firebase={collection,addDoc,getDocs,deleteDoc,doc,onSnapshot,query,order
 window.dispatchEvent(new Event('firebaseReady'));
 </script>
 <style>
-:root{--azul:#1a4fa0;--azul-escuro:#0d3070;--azul-claro:#e8f0ff;--verde:#1a7a3c;--verde-escuro:#145e2e;--verde-claro:#e8f5ee;--amarelo:#f5c400;--cinza-claro:#f2f4f3;--cinza:#777;--texto:#1a1a1a;--sombra:0 2px 14px rgba(0,0,0,.09);--r:12px}
+:root{--azul:#1a4fa0;--azul-escuro:#0d3070;--azul-claro:#e8f0ff;--verde:#1a7a3c;--verde-escuro:#145e2e;--verde-claro:#e8f5ee;--amarelo:#f5c400;--cinza-claro:#f2f4f3;--cinza:#777;--texto:#1a1a1a;--sombra:0 2px 14px rgba(0,0,0,.09);--r:12px;--insta:#e1306c}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',Arial,sans-serif;background:var(--cinza-claro);color:var(--texto);min-height:100vh}
 header{background:linear-gradient(135deg,var(--azul) 0%,var(--verde) 100%);color:#fff;padding:0;overflow:hidden;box-shadow:var(--sombra)}
@@ -48,6 +48,7 @@ header{background:linear-gradient(135deg,var(--azul) 0%,var(--verde) 100%);color
 .btn-verde{background:var(--verde);color:#fff}.btn-verde:hover{background:var(--verde-escuro)}
 .btn-azul{background:var(--azul);color:#fff}.btn-azul:hover{background:var(--azul-escuro)}
 .btn-amarelo{background:var(--amarelo);color:#1a1a1a}
+.btn-insta{background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff;font-size:.8rem;padding:7px 12px;border-radius:7px;text-decoration:none;display:inline-block;border:none;cursor:pointer;font-weight:700}
 .btn-wa{background:#25d366;color:#fff;font-size:.8rem;padding:7px 12px;border-radius:7px;text-decoration:none;display:inline-block;border:none;cursor:pointer;font-weight:700}
 .btn-red{background:#fff;color:#c0392b;border:1.5px solid #c0392b;border-radius:7px;padding:6px 10px;font-size:.8rem;cursor:pointer}
 .btn-red:hover{background:#c0392b;color:#fff}
@@ -98,6 +99,10 @@ header{background:linear-gradient(135deg,var(--azul) 0%,var(--verde) 100%);color
 .cadastro-card .topo img{width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid var(--azul);margin-bottom:10px}
 .cadastro-card .topo h1{color:var(--azul);font-size:1.3rem}
 .cadastro-card .topo p{color:var(--cinza);font-size:.85rem;margin-top:4px}
+.insta-banner{background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);border-radius:10px;padding:12px 16px;margin-bottom:16px;text-align:center;color:#fff}
+.insta-banner p{font-size:.85rem;margin-bottom:8px}
+.insta-banner a{display:inline-block;background:rgba(255,255,255,.2);color:#fff;padding:8px 16px;border-radius:8px;text-decoration:none;font-weight:700;font-size:.9rem}
+.insta-banner a:hover{background:rgba(255,255,255,.35)}
 .indicador-box{background:var(--verde-claro);border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:.85rem;color:var(--verde-escuro);font-weight:600}
 .sucesso-tela{text-align:center;padding:20px}
 .sucesso-tela .big{font-size:3rem;margin-bottom:12px}
@@ -151,6 +156,7 @@ const TIMEOUT_MS=30*60*1000;
 const MAX_TENTATIVAS=3;
 const BLOQUEIO_MS=5*60*1000;
 const FOTO='https://rafaelrps234-arch.github.io/ester-eleitores/Imagem%20do%20WhatsApp%202026-06-24%20%C3%A0s%2020.36.03.jpeg';
+const INSTAGRAM='https://www.instagram.com/estercarvalhooficial_';
 
 const MAPA_RA={
   'ASA NORTE':'Plano Piloto','ASA SUL':'Plano Piloto','SETOR COMERCIAL SUL':'Plano Piloto',
@@ -168,8 +174,7 @@ const MAPA_RA={
   'NÚCLEO BANDEIRANTE':'Núcleo Bandeirante','NUCLEO BANDEIRANTE':'Núcleo Bandeirante',
   'RECANTO DAS EMAS':'Recanto das Emas',
   'RIACHO FUNDO':'Riacho Fundo','RIACHO FUNDO I':'Riacho Fundo','RIACHO FUNDO II':'Riacho Fundo II',
-  'SANTA MARIA':'Santa Maria',
-  'SÃO SEBASTIÃO':'São Sebastião','SAO SEBASTIAO':'São Sebastião',
+  'SANTA MARIA':'Santa Maria','SÃO SEBASTIÃO':'São Sebastião','SAO SEBASTIAO':'São Sebastião',
   'PARANOÁ':'Paranoá','PARANOA':'Paranoá','ITAPOÃ':'Paranoá',
   'ÁGUAS CLARAS':'Águas Claras','AGUAS CLARAS':'Águas Claras',
   'VICENTE PIRES':'Vicente Pires','ESTRUTURAL':'Estrutural','SCIA':'Estrutural',
@@ -241,6 +246,7 @@ function renderPublica(){
       <p style="color:#777;font-size:.85rem;margin-top:4px;margin-bottom:6px">Pré-candidata a Deputada Federal</p>
       <p style="color:#1a7a3c;font-size:.9rem;font-style:italic;margin-bottom:20px">🐾 Política se faz com amor</p>
       <a href="${SITE}" style="display:block;text-decoration:none;background:#1a4fa0;color:#fff;padding:14px;border-radius:8px;font-weight:700;font-size:1rem;margin-bottom:10px">🤝 Quero Apoiar!</a>
+      <a href="${INSTAGRAM}" target="_blank" style="display:block;text-decoration:none;background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff;padding:12px;border-radius:8px;font-weight:700;font-size:.9rem;margin-bottom:10px">📸 Ver Instagram da Ester</a>
       <a href="${linkLoginApoiador()}" style="display:block;text-decoration:none;background:#f4f4f4;color:#1a4fa0;padding:12px;border-radius:8px;font-weight:600;font-size:.9rem">🔐 Entrar no meu painel</a>
     </div>
   </div>`;
@@ -558,6 +564,11 @@ async function renderPainelApoiador(id){
       <h2>Olá, ${ap.nome.split(' ')[0]}!</h2><p>Seu painel de indicações</p>
       <button onclick="sairApoiador()" style="margin-top:10px;background:rgba(255,255,255,.2);border:none;color:#fff;padding:6px 14px;border-radius:8px;cursor:pointer;font-size:.8rem">🚪 Sair</button>
     </div>
+    <div class="mini-card" style="background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff;text-align:center">
+      <h3 style="color:#fff;margin-bottom:8px">📸 Acompanhe o trabalho da Ester!</h3>
+      <p style="font-size:.85rem;margin-bottom:12px;opacity:.9">Siga no Instagram e fique por dentro de tudo</p>
+      <a href="${INSTAGRAM}" target="_blank" style="display:inline-block;background:rgba(255,255,255,.25);color:#fff;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:700;font-size:.9rem">📸 @estercarvalhooficial_</a>
+    </div>
     <div class="mini-card"><h3>📊 Sua rede</h3>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:center">
         <div style="background:var(--azul-claro);border-radius:8px;padding:14px"><div style="font-size:1.8rem;font-weight:800;color:var(--azul)">${filhos.length}</div><div style="font-size:.75rem;color:var(--cinza)">Indicados diretos</div></div>
@@ -585,6 +596,10 @@ function compartilharWA(link,nome){window.open('https://wa.me/?text='+encodeURIC
 function renderCadastroPublico(refId){
   document.getElementById('app').innerHTML=`<div class="tela-cadastro-pub"><div class="cadastro-card" id="cad-card">
     <div class="topo"><img src="${FOTO}" onerror="this.style.display='none'"><h1>Apoie Ester Carvalho!</h1><p>🐾 Política se faz com amor</p></div>
+    <div class="insta-banner">
+      <p>📸 Conheça o trabalho da Ester antes de apoiar!</p>
+      <a href="${INSTAGRAM}" target="_blank">Ver Instagram @estercarvalhooficial_</a>
+    </div>
     <div id="ind-box"></div>
     <div class="campo"><label>Nome completo *</label><input id="p-nome" type="text" placeholder="Seu nome completo"></div>
     <div class="campo"><label>WhatsApp *</label><input id="p-fone" type="tel" placeholder="(00) 00000-0000" maxlength="15" oninput="mascaraTel(this)"></div>
@@ -615,6 +630,10 @@ async function salvarPublico(refId){
     <img src="${FOTO}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--azul);margin-bottom:12px" onerror="this.style.display='none'">
     <div class="big">✅</div><h2>Obrigado, ${nome.split(' ')[0]}!</h2><p>Você agora faz parte da Rede Ester Carvalho!</p>
     <div style="background:var(--azul-claro);border-radius:10px;padding:12px;margin:12px 0;font-size:.85rem;color:var(--azul-escuro)"><strong>Seu login:</strong><br>📱 ${fone}<br>🔑 ${senha}</div>
+    <div style="background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);border-radius:10px;padding:12px;margin:12px 0;text-align:center">
+      <p style="color:#fff;font-size:.85rem;margin-bottom:8px">📸 Siga a Ester no Instagram!</p>
+      <a href="${INSTAGRAM}" target="_blank" style="display:inline-block;background:rgba(255,255,255,.25);color:#fff;padding:8px 16px;border-radius:8px;text-decoration:none;font-weight:700;font-size:.85rem">@estercarvalhooficial_</a>
+    </div>
     <div style="background:var(--verde-claro);border-radius:10px;padding:12px;margin:12px 0;font-size:.85rem;color:var(--verde-escuro)"><strong>Espalhe a rede!</strong><br>Compartilhe seu link!</div>
     <div style="background:#f4f4f4;border-radius:8px;padding:10px;font-size:.73rem;word-break:break-all;color:#444;margin-bottom:14px">${meuLink}</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
