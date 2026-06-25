@@ -172,12 +172,10 @@ const MAPA_RA={
   'SÃO SEBASTIÃO':'São Sebastião','SAO SEBASTIAO':'São Sebastião',
   'PARANOÁ':'Paranoá','PARANOA':'Paranoá','ITAPOÃ':'Paranoá',
   'ÁGUAS CLARAS':'Águas Claras','AGUAS CLARAS':'Águas Claras',
-  'VICENTE PIRES':'Vicente Pires',
-  'ESTRUTURAL':'Estrutural','SCIA':'Estrutural',
-  'FERCAL':'Fercal',
-  'SOL NASCENTE':'Sol Nascente/Pôr do Sol',
-  'JARDIM BOTÂNICO':'Jardim Botânico',
-  'SIA':'SIA','VARJÃO':'Varjão',
+  'VICENTE PIRES':'Vicente Pires','ESTRUTURAL':'Estrutural','SCIA':'Estrutural',
+  'FERCAL':'Fercal','SOL NASCENTE':'Sol Nascente/Pôr do Sol',
+  'JARDIM BOTÂNICO':'Jardim Botânico','SIA':'SIA','VARJÃO':'Varjão',
+  'CIDADE OCIDENTAL':'Cidade Ocidental',
 };
 
 function identificarRA(a){
@@ -363,7 +361,7 @@ function renderAdmin(){
       <div class="campo"><label>Nome *</label><input id="a-nome" type="text" placeholder="Nome"></div>
       <div class="campo"><label>WhatsApp *</label><input id="a-fone" type="tel" placeholder="(00) 00000-0000" maxlength="15" oninput="mascaraTel(this)"></div>
       <div class="campo"><label>Senha *</label><input id="a-senha" type="text" placeholder="Crie uma senha"></div>
-      <div class="campo"><label>CEP</label><input id="a-cep" type="text" placeholder="00000-000" maxlength="9" oninput="mascaraCep(this)" onblur="buscaCep('a')"><div class="endereco-auto" id="a-end"></div></div>
+      <div class="campo"><label>CEP *</label><input id="a-cep" type="text" placeholder="00000-000" maxlength="9" oninput="mascaraCep(this)" onblur="buscaCep('a')"><div class="endereco-auto" id="a-end"></div></div>
       <div class="campo"><label>Indicado por</label><select id="a-ref"><option value="">— Nenhum —</option></select></div>
       <button class="btn btn-azul btn-full" onclick="salvarAdmin()">✅ Salvar</button>
     </div>
@@ -376,11 +374,7 @@ function renderAdmin(){
   if(_unsubscribe)_unsubscribe();
   _unsubscribe=ouvirDados(dados=>{
     _dados=dados;
-    atualizarStats();
-    renderRAResumo();
-    renderLista();
-    renderArvore();
-    populaSelectRef();
+    atualizarStats();renderRAResumo();renderLista();renderArvore();populaSelectRef();
     document.getElementById('sync-txt').textContent='✅ '+dados.length+' apoiadores — '+new Date().toLocaleTimeString('pt-BR');
   });
 
@@ -405,9 +399,8 @@ function atualizarStats(){
 }
 
 function buildRA(){
-  const contagem={};
-  _dados.forEach(a=>{const ra=identificarRA(a);contagem[ra]=(contagem[ra]||0)+1;});
-  return Object.entries(contagem).sort((a,b)=>b[1]-a[1]);
+  const c={};_dados.forEach(a=>{const ra=identificarRA(a);c[ra]=(c[ra]||0)+1;});
+  return Object.entries(c).sort((a,b)=>b[1]-a[1]);
 }
 
 function renderRAResumo(){
@@ -427,8 +420,6 @@ function renderRAResumo(){
       </div>
     </div>`;
   }).join('');
-  const semId=_dados.filter(a=>{const r=identificarRA(a);return r==='Não identificada'||r.includes('não identificada');}).length;
-  if(semId>0)el.innerHTML+=`<div style="margin-top:10px;font-size:.8rem;color:var(--cinza);text-align:center">⚠️ ${semId} sem região identificada</div>`;
 }
 
 function renderRA(){
@@ -514,7 +505,10 @@ function populaSelectRef(){
 async function salvarAdmin(){
   const nome=document.getElementById('a-nome').value.trim(),fone=document.getElementById('a-fone').value.trim(),senha=document.getElementById('a-senha').value.trim();
   if(!nome){toast('Informe o nome',true);return;}if(!fone){toast('Informe o WhatsApp',true);return;}if(!senha){toast('Crie uma senha',true);return;}
+  const cepAdmin=document.getElementById('a-cep').value.replace(/\D/g,'');
+  if(cepAdmin.length!==8){toast('Informe o CEP completo',true);return;}
   const endEl=document.getElementById('a-end'),endD=endEl._dados||{};
+  if(!endD.cidade){toast('Aguarde o CEP ser validado',true);return;}
   const ap={nome,fone,senha,cep:document.getElementById('a-cep').value.trim(),refId:document.getElementById('a-ref').value||null,bairro:endD.bairro||'',cidade:endD.cidade||'',uf:endD.uf||'',logradouro:endD.logradouro||'',data:new Date().toISOString()};
   await salvarApoiador(ap);
   ['a-nome','a-fone','a-senha','a-cep'].forEach(i=>document.getElementById(i).value='');
@@ -579,7 +573,7 @@ async function renderPainelApoiador(id){
         <button class="btn btn-amarelo" onclick="compartilharWA('${meuLink}','${ap.nome}')">📤 WhatsApp</button>
       </div>
     </div>
-    ${filhos.length?`<div class="mini-card"><h3>👥 Meus indicados (${filhos.length})</h3>${filhos.map(f=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f0f0f0"><div class="avatar" style="width:36px;height:36px;font-size:1rem">${(f.nome||'?')[0].toUpperCase()}</div><div><div style="font-weight:700;font-size:.9rem">${f.nome}</div><div style="font-size:.78rem;color:var(--cinza)">${f.fone||''} ${f.cidade?'· '+f.cidade:''}</div></div></div>`).join('')}</div>`:'<div class="mini-card"><h3>👥 Meus indicados</h3><div class="vazio" style="padding:20px">Nenhum indicado ainda.<br>Compartilhe seu link!</div></div>'}
+    ${filhos.length?`<div class="mini-card"><h3>👥 Meus indicados (${filhos.length})</h3>${filhos.map(f=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f0f0f0"><div class="avatar" style="width:36px;height:36px;font-size:1rem">${(f.nome||'?')[0].toUpperCase()}</div><div><div style="font-weight:700;font-size:.9rem">${f.nome}</div><div style="font-size:.78rem;color:var(--cinza)">${f.fone||''} ${identificarRA(f)?'· '+identificarRA(f):''}</div></div></div>`).join('')}</div>`:'<div class="mini-card"><h3>👥 Meus indicados</h3><div class="vazio" style="padding:20px">Nenhum indicado ainda.<br>Compartilhe seu link!</div></div>'}
   </div></div>`;
   new QRCode(document.getElementById('qr-meu'),{text:meuLink,width:240,height:240,colorDark:'#1a4fa0',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
 }
@@ -595,7 +589,7 @@ function renderCadastroPublico(refId){
     <div class="campo"><label>Nome completo *</label><input id="p-nome" type="text" placeholder="Seu nome completo"></div>
     <div class="campo"><label>WhatsApp *</label><input id="p-fone" type="tel" placeholder="(00) 00000-0000" maxlength="15" oninput="mascaraTel(this)"></div>
     <div class="campo"><label>Crie sua senha *</label><input id="p-senha" type="password" placeholder="Mínimo 4 caracteres"><div class="hint">Use para acessar seu painel depois</div></div>
-    <div class="campo"><label>CEP *</label><input id="p-cep" type="text" placeholder="00000-000" maxlength="9" oninput="mascaraCep(this)" onblur="buscaCep('p')"><div class="endereco-auto" id="p-end"></div></div>
+    <div class="campo"><label>CEP *</label><input id="p-cep" type="text" placeholder="00000-000" maxlength="9" oninput="mascaraCep(this)" onblur="buscaCep('p')"><div class="endereco-auto" id="p-end"></div><div class="hint">Obrigatório para identificar sua região</div></div>
     <button class="btn btn-azul btn-full" onclick="salvarPublico('${refId||''}')">🤝 Quero Apoiar!</button>
     <div style="margin-top:14px;text-align:center;font-size:.82rem;color:var(--cinza)">Já tem conta? <a href="${linkLoginApoiador()}" style="color:var(--azul);font-weight:600">Entrar aqui</a></div>
   </div></div>`;
@@ -603,9 +597,16 @@ function renderCadastroPublico(refId){
 }
 
 async function salvarPublico(refId){
-  const nome=document.getElementById('p-nome').value.trim(),fone=document.getElementById('p-fone').value.trim(),senha=document.getElementById('p-senha').value.trim();
-  if(!nome){toast('Informe seu nome',true);return;}if(!fone){toast('Informe seu WhatsApp',true);return;}if(!senha||senha.length<4){toast('Crie uma senha com mínimo 4 caracteres',true);return;}
+  const nome=document.getElementById('p-nome').value.trim();
+  const fone=document.getElementById('p-fone').value.trim();
+  const senha=document.getElementById('p-senha').value.trim();
+  if(!nome){toast('Informe seu nome',true);return;}
+  if(!fone){toast('Informe seu WhatsApp',true);return;}
+  if(!senha||senha.length<4){toast('Crie uma senha com mínimo 4 caracteres',true);return;}
+  const cep=document.getElementById('p-cep').value.replace(/\D/g,'');
+  if(cep.length!==8){toast('Informe o CEP completo (8 números)',true);return;}
   const endEl=document.getElementById('p-end'),endD=endEl._dados||{};
+  if(!endD.cidade){toast('Aguarde o CEP ser validado ou verifique o CEP',true);return;}
   const ap={nome,fone,senha,cep:document.getElementById('p-cep').value.trim(),refId:refId||null,bairro:endD.bairro||'',cidade:endD.cidade||'',uf:endD.uf||'',logradouro:endD.logradouro||'',data:new Date().toISOString()};
   const novoId=await salvarApoiador(ap);
   sessionStorage.setItem('ap_logado',novoId);
@@ -630,10 +631,10 @@ async function buscaCep(pfx){
   const cepIn=document.getElementById(pfx+'-cep'),endEl=document.getElementById(pfx+'-end'),cep=cepIn.value.replace(/\D/g,'');
   if(cep.length!==8)return;endEl.style.display='block';endEl.textContent='🔍 Buscando...';endEl._dados=null;
   try{const r=await fetch(`https://viacep.com.br/ws/${cep}/json/`),data=await r.json();
-    if(data.erro){endEl.textContent='⚠️ CEP não encontrado';return;}
+    if(data.erro){endEl.textContent='⚠️ CEP não encontrado. Verifique e tente novamente.';return;}
     endEl._dados={logradouro:data.logradouro,bairro:data.bairro,cidade:data.localidade,uf:data.uf};
     endEl.textContent=`📍 ${[data.logradouro,data.bairro,data.localidade,data.uf].filter(Boolean).join(', ')}`;}
-  catch{endEl.textContent='⚠️ Erro ao buscar CEP';}
+  catch{endEl.textContent='⚠️ Erro ao buscar CEP. Verifique sua conexão.';}
 }
 let _tt;
 function toast(msg,erro=false){const el=document.getElementById('toast');el.textContent=msg;el.className=erro?'erro show':'show';clearTimeout(_tt);_tt=setTimeout(()=>el.className='',3000);}
