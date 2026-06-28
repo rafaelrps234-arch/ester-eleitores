@@ -149,9 +149,10 @@ header{background:linear-gradient(135deg,var(--azul) 0%,var(--verde) 100%);color
   </div>
 </div>
 <script>
-const SENHA_ADMIN='RAFAEL';
+// 🔐 SEGURANÇA - credenciais atualizadas
+const SENHA_ADMIN='Rafaelrps23';
 const SITE='https://tinyurl.com/3fmdcv6p';
-const URL_SECRETA='rede2024';
+const URL_SECRETA='adminEster2026';
 const TIMEOUT_MS=30*60*1000;
 const MAX_TENTATIVAS=3;
 const BLOQUEIO_MS=5*60*1000;
@@ -269,7 +270,7 @@ function renderLogin(){
 
 function entrar(){
   const bloq=estaBloqueado();if(bloq){toast('Acesso bloqueado!',true);return;}
-  const v=document.getElementById('inp-senha').value.trim().toUpperCase();
+  const v=document.getElementById('inp-senha').value.trim();
   if(v===SENHA_ADMIN){resetarTentativas();setAdminLogado();renderAdmin();}
   else{registrarErro();const t=getTentativas(),rest=MAX_TENTATIVAS-t.n;document.getElementById('login-erro').style.display='block';if(rest>0){document.getElementById('rest').textContent=rest;}else{document.getElementById('login-erro').style.display='none';document.getElementById('login-bloq').style.display='block';setTimeout(()=>renderLogin(),BLOQUEIO_MS);}}
 }
