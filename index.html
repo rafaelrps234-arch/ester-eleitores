@@ -474,14 +474,14 @@ function gerarMensagem(a){
   const primeiroNome=(a?a.nome:'Apoiador').split(' ')[0];
   const link=a?linkCadastro(a.id):'[seu link]';
   if(tipo==='boasvindas'){
-    return`Olá, ${primeiroNome}! 🌟\n\nSou Ester Carvalho, pré-candidata a Deputada Federal pelo DF.\n\nMuito obrigada por fazer parte da nossa Rede de Apoiadores! 🐾\n\nSeu link exclusivo para indicar amigos:\n👉 ${link}\n\nJuntos vamos fazer a diferença! 💚\n\n📸 @estercarvalhooficial_`;
+    return`Olá, ${primeiroNome}! 🌟\n\nSou Ester Carvalho, pré-candidata a Deputada Federal pelo DF.\n\nMuito obrigada por fazer parte da nossa Rede de Apoiadores! 🐾\n\nSeu link exclusivo para indicar amigos:\n👉 ${link}\n\n📸 Me siga no Instagram:\nhttps://www.instagram.com/estercarvalhooficial_\n\nJuntos vamos fazer a diferença! 💚`;
   }else if(tipo==='reuniao'){
     const data=document.getElementById('ag-data')?.value||'em breve';
     const hora=document.getElementById('ag-hora')?.value||'a confirmar';
     const local=document.getElementById('ag-local')?.value||'a confirmar';
-    return`Olá, ${primeiroNome}! 📅\n\nEster Carvalho convida você para nossa reunião!\n\n📅 ${data}\n🕐 ${hora}\n📍 ${local}\n\nSua presença é muito importante! 💪🐾\n\nEster Carvalho 💚`;
+    return`Olá, ${primeiroNome}! 📅\n\nEster Carvalho convida você para nossa reunião!\n\n📅 ${data}\n🕐 ${hora}\n📍 ${local}\n\nSua presença é muito importante! 💪🐾\n\n📸 Instagram: https://www.instagram.com/estercarvalhooficial_\n\nEster Carvalho 💚`;
   }else if(tipo==='mobilizacao'){
-    return`Olá, ${primeiroNome}! 📢\n\nEster Carvalho precisa do seu apoio!\n\nCompartilhe seu link com amigos e família:\n👉 ${link}\n\nCada voto faz a diferença! 🐾💚\n\nEster Carvalho 🌟`;
+    return`Olá, ${primeiroNome}! 📢\n\nEster Carvalho precisa do seu apoio!\n\nCompartilhe seu link com amigos e família:\n👉 ${link}\n\n📸 Siga também no Instagram:\nhttps://www.instagram.com/estercarvalhooficial_\n\nCada voto faz a diferença! 🐾💚\n\nEster Carvalho 🌟`;
   }else{
     return(document.getElementById('ag-texto')?.value||'').replace('[Nome]',primeiroNome);
   }
