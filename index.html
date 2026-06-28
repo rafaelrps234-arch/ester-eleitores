@@ -332,6 +332,8 @@ function renderAdmin(){
     <button class="tab" onclick="tab(this,'arvore')">🌳 Rede</button>
     <button class="tab" onclick="tab(this,'mapa')">🗺️ Regiões DF</button>
     <button class="tab" onclick="tab(this,'cadAdm')">➕ Cadastrar</button>
+    <button class="tab" onclick="tab(this,'msgs')">📩 Mensagens</button>
+    <button class="tab" onclick="tab(this,'agente')">🤖 Agente</button>
   </div>
   <div id="tela-painel" class="tela ativa">
     <div class="stats">
@@ -374,6 +376,63 @@ function renderAdmin(){
   <div id="tela-mapa" class="tela">
     <div class="card"><h2>🗺️ Regiões Administrativas do DF</h2><p style="font-size:.82rem;color:var(--cinza);margin-bottom:16px">Identificado pelo bairro do CEP</p><div id="ranking-ra"></div></div>
   </div>
+  <div id="tela-msgs" class="tela">
+    <div class="card">
+      <h2>📩 Mensagens de Boas-vindas</h2>
+      <p style="font-size:.82rem;color:var(--cinza);margin-bottom:16px">Clique em "WhatsApp" para abrir a conversa com a mensagem pronta, ou "Copiar" para copiar o texto.</p>
+      <div id="msgs-lista"><div class="loading">Carregando...</div></div>
+    </div>
+  </div>
+  <div id="tela-agente" class="tela">
+    <div class="card">
+      <h2>🤖 Agente de Mensagens</h2>
+      <p style="font-size:.82rem;color:var(--cinza);margin-bottom:16px">O agente abre o WhatsApp de cada apoiador automaticamente. Você só clica <strong>"Enviar"</strong> em cada um.</p>
+      <div class="campo">
+        <label>Tipo de mensagem</label>
+        <select id="ag-tipo" onchange="previewMensagem()">
+          <option value="boasvindas">🌟 Boas-vindas</option>
+          <option value="reuniao">📅 Aviso de Reunião</option>
+          <option value="mobilizacao">📢 Mobilização</option>
+          <option value="personalizada">✏️ Personalizada</option>
+        </select>
+      </div>
+      <div id="ag-campos-reuniao" style="display:none">
+        <div class="campo"><label>📅 Data</label><input id="ag-data" type="text" placeholder="Ex: sábado, 05 de julho" oninput="previewMensagem()"></div>
+        <div class="campo"><label>🕐 Horário</label><input id="ag-hora" type="text" placeholder="Ex: 14h" oninput="previewMensagem()"></div>
+        <div class="campo"><label>📍 Local</label><input id="ag-local" type="text" placeholder="Ex: Quadra 15 de Taguatinga" oninput="previewMensagem()"></div>
+      </div>
+      <div id="ag-campos-personalizada" style="display:none">
+        <div class="campo"><label>✏️ Mensagem</label><textarea id="ag-texto" rows="4" style="width:100%;padding:10px;border:1.5px solid #ddd;border-radius:8px;font-size:.9rem" placeholder="Digite aqui..." oninput="previewMensagem()"></textarea></div>
+      </div>
+      <div class="campo">
+        <label>📋 Preview</label>
+        <div id="ag-preview" style="background:#e8f5e9;border-radius:8px;padding:12px;font-size:.82rem;white-space:pre-line;color:#1a3a1a;border-left:4px solid #1a7a3c;min-height:60px"></div>
+      </div>
+      <div class="campo">
+        <label>⏱️ Intervalo entre envios</label>
+        <select id="ag-intervalo">
+          <option value="5000">5 segundos (recomendado)</option>
+          <option value="8000">8 segundos (mais seguro)</option>
+          <option value="3000">3 segundos (rápido)</option>
+        </select>
+      </div>
+      <div id="ag-progresso" style="display:none;margin-bottom:16px">
+        <div style="background:#f0f0f0;border-radius:8px;height:14px;overflow:hidden;margin-bottom:8px">
+          <div id="ag-barra" style="height:100%;background:linear-gradient(90deg,var(--azul),var(--verde));border-radius:8px;width:0%;transition:width .5s"></div>
+        </div>
+        <div id="ag-status" style="font-size:.85rem;color:var(--azul);text-align:center;font-weight:600"></div>
+        <div id="ag-prox" style="font-size:.78rem;color:var(--cinza);text-align:center;margin-top:4px"></div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-azul btn-full" id="ag-btn" onclick="iniciarDisparo()">🚀 Iniciar Disparo Automático</button>
+        <button class="btn btn-red btn-full" id="ag-stop" style="display:none" onclick="pararDisparo()">⏹️ Parar</button>
+      </div>
+    </div>
+    <div class="card" id="ag-log" style="display:none">
+      <h2>📋 Registro de Envios</h2>
+      <div id="ag-log-lista"></div>
+    </div>
+  </div>
   <div id="tela-cadAdm" class="tela">
     <div class="card">
       <h2>➕ Cadastrar Apoiador</h2>
@@ -407,7 +466,95 @@ function tab(btn,id){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('ativo'));
   document.querySelectorAll('.tela').forEach(t=>t.classList.remove('ativa'));
   btn.classList.add('ativo');document.getElementById('tela-'+id).classList.add('ativa');
-  if(id==='arvore')renderArvore();if(id==='mapa')renderRA();if(id==='cadAdm')populaSelectRef();
+  if(id==='arvore')renderArvore();if(id==='mapa')renderRA();if(id==='cadAdm')populaSelectRef();if(id==='msgs')renderMsgs();if(id==='agente')previewMensagem();
+}
+
+function gerarMensagem(a){
+  const tipo=document.getElementById('ag-tipo')?.value||'boasvindas';
+  const primeiroNome=(a?a.nome:'Apoiador').split(' ')[0];
+  const link=a?linkCadastro(a.id):'[seu link]';
+  if(tipo==='boasvindas'){
+    return`Olá, ${primeiroNome}! 🌟\n\nSou Ester Carvalho, pré-candidata a Deputada Federal pelo DF.\n\nMuito obrigada por fazer parte da nossa Rede de Apoiadores! 🐾\n\nSeu link exclusivo para indicar amigos:\n👉 ${link}\n\nJuntos vamos fazer a diferença! 💚\n\n📸 @estercarvalhooficial_`;
+  }else if(tipo==='reuniao'){
+    const data=document.getElementById('ag-data')?.value||'em breve';
+    const hora=document.getElementById('ag-hora')?.value||'a confirmar';
+    const local=document.getElementById('ag-local')?.value||'a confirmar';
+    return`Olá, ${primeiroNome}! 📅\n\nEster Carvalho convida você para nossa reunião!\n\n📅 ${data}\n🕐 ${hora}\n📍 ${local}\n\nSua presença é muito importante! 💪🐾\n\nEster Carvalho 💚`;
+  }else if(tipo==='mobilizacao'){
+    return`Olá, ${primeiroNome}! 📢\n\nEster Carvalho precisa do seu apoio!\n\nCompartilhe seu link com amigos e família:\n👉 ${link}\n\nCada voto faz a diferença! 🐾💚\n\nEster Carvalho 🌟`;
+  }else{
+    return(document.getElementById('ag-texto')?.value||'').replace('[Nome]',primeiroNome);
+  }
+}
+
+function previewMensagem(){
+  const tipo=document.getElementById('ag-tipo')?.value;
+  document.getElementById('ag-campos-reuniao').style.display=tipo==='reuniao'?'block':'none';
+  document.getElementById('ag-campos-personalizada').style.display=tipo==='personalizada'?'block':'none';
+  const prev=document.getElementById('ag-preview');
+  if(prev)prev.textContent=gerarMensagem(null);
+}
+
+let _stopDisparo=false;
+
+async function iniciarDisparo(){
+  const comFone=_dados.filter(a=>(a.fone||'').replace(/\D/g,'').length>=10);
+  if(!comFone.length){toast('Nenhum apoiador com WhatsApp',true);return;}
+  if(!confirm(`🚀 Iniciar disparo para ${comFone.length} apoiadores?\n\nO WhatsApp de cada um abrirá automaticamente.\nVocê só clica ENVIAR em cada conversa.`))return;
+  _stopDisparo=false;
+  document.getElementById('ag-btn').style.display='none';
+  document.getElementById('ag-stop').style.display='block';
+  document.getElementById('ag-progresso').style.display='block';
+  document.getElementById('ag-log').style.display='block';
+  document.getElementById('ag-log-lista').innerHTML='';
+  const intervalo=parseInt(document.getElementById('ag-intervalo').value);
+  for(let i=0;i<comFone.length;i++){
+    if(_stopDisparo)break;
+    const a=comFone[i];
+    const fNum=a.fone.replace(/\D/g,'');
+    const msg=gerarMensagem(a);
+    const pct=Math.round(((i+1)/comFone.length)*100);
+    document.getElementById('ag-barra').style.width=pct+'%';
+    document.getElementById('ag-status').textContent=`${i+1}/${comFone.length} — ${a.nome}`;
+    const prox=comFone[i+1];
+    document.getElementById('ag-prox').textContent=prox?`Próximo: ${prox.nome}`:'Último apoiador!';
+    document.getElementById('ag-log-lista').innerHTML=`<div style="padding:8px;background:var(--verde-claro);border-radius:8px;margin-bottom:6px;font-size:.82rem">✅ <strong>${a.nome}</strong> — ${a.fone}</div>`+document.getElementById('ag-log-lista').innerHTML;
+    window.open(`https://wa.me/55${fNum}?text=${encodeURIComponent(msg)}`,'_blank');
+    await new Promise(r=>setTimeout(r,intervalo));
+  }
+  document.getElementById('ag-btn').style.display='block';
+  document.getElementById('ag-stop').style.display='none';
+  document.getElementById('ag-status').textContent=_stopDisparo?'⏹️ Pausado':'✅ Concluído!';
+  document.getElementById('ag-prox').textContent='';
+  toast(_stopDisparo?'Disparo pausado':'✅ Todos os apoiadores foram contatados!');
+}
+
+function pararDisparo(){_stopDisparo=true;}
+
+function renderMsgs(){
+  const el=document.getElementById('msgs-lista');if(!el)return;
+  if(!_dados.length){el.innerHTML='<div class="vazio">Nenhum apoiador cadastrado ainda.</div>';return;}
+  const sorted=[..._dados].sort((a,b)=>new Date(b.data)-new Date(a.data));
+  el.innerHTML=sorted.map(a=>{
+    const fNum=(a.fone||'').replace(/\D/g,'');
+    const primeiroNome=a.nome.split(' ')[0];
+    const meuLink=linkCadastro(a.id);
+    const msg=`Olá, ${primeiroNome}! 🌟\n\nSou Ester Carvalho, pré-candidata a Deputada Federal pelo DF.\n\nMuito obrigada por fazer parte da nossa Rede de Apoiadores! 🐾\n\nVocê agora tem um link exclusivo para indicar mais pessoas para a nossa causa:\n👉 ${meuLink}\n\nJuntos vamos fazer a diferença! 💚\n\n📸 Me siga no Instagram: @estercarvalhooficial_`;
+    return`<div class="apoiador-card" style="flex-direction:column;align-items:flex-start;gap:10px">
+      <div style="display:flex;align-items:center;gap:10px;width:100%">
+        <div class="avatar">${(a.nome||'?')[0].toUpperCase()}</div>
+        <div class="ainfo">
+          <div class="nome">${a.nome}</div>
+          <div class="det">📱 ${a.fone||'—'} | 📅 ${new Date(a.data).toLocaleDateString('pt-BR')}</div>
+        </div>
+      </div>
+      <div style="background:#f4f4f4;border-radius:8px;padding:10px;font-size:.8rem;color:#444;width:100%;white-space:pre-line">${msg}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        ${fNum?`<a class="btn-wa" href="https://wa.me/55${fNum}?text=${encodeURIComponent(msg)}" target="_blank">📤 Enviar no WhatsApp</a>`:''}
+        <button class="btn btn-amarelo" style="font-size:.8rem;padding:7px 12px" onclick="copiarTexto(\`${msg.replace(/`/g,"'")}\`)">📋 Copiar</button>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function atualizarStats(){
@@ -639,6 +786,11 @@ async function salvarPublico(refId){
   const novoId=await salvarApoiador(ap);
   sessionStorage.setItem('ap_logado',novoId);
   const meuLink=linkCadastro(novoId),meuPainel=linkPainel(novoId);
+  // 📲 Enviar mensagem automática de boas-vindas via WhatsApp
+  const primeiroNome=nome.split(' ')[0];
+  const fNum=fone.replace(/\D/g,'');
+  const msgBoasVindas=`Olá, ${primeiroNome}! 🌟\n\nSou Ester Carvalho, pré-candidata a Deputada Federal pelo DF.\n\nMuito obrigada por fazer parte da nossa Rede de Apoiadores! 🐾\n\nVocê agora tem um link exclusivo para indicar mais pessoas para a nossa causa:\n👉 ${meuLink}\n\nJuntos vamos fazer a diferença! 💚\n\n📸 Me siga no Instagram: @estercarvalhooficial_`;
+  if(fNum){setTimeout(()=>window.open(`https://wa.me/55${fNum}?text=${encodeURIComponent(msgBoasVindas)}`,'_blank'),1500);}
   document.getElementById('cad-card').innerHTML=`<div class="sucesso-tela">
     <img src="${FOTO}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--azul);margin-bottom:12px" onerror="this.style.display='none'">
     <div class="big">✅</div><h2>Obrigado, ${nome.split(' ')[0]}!</h2><p>Você agora faz parte da Rede Ester Carvalho!</p>
