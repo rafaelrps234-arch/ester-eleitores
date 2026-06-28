@@ -8,6 +8,7 @@
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, onSnapshot, query, orderBy, where } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 const firebaseConfig = {
   apiKey: "AIzaSyDm7kBZzrmQ749ysjkQv9DFrlx5VuuGGE0",
   authDomain: "campanha-ester.firebaseapp.com",
@@ -18,9 +19,10 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 const COL = 'apoiadores';
-window._db=db;window._col=COL;
-window._firebase={collection,addDoc,getDocs,deleteDoc,doc,onSnapshot,query,orderBy,where};
+window._db=db;window._col=COL;window._auth=auth;
+window._firebase={collection,addDoc,getDocs,deleteDoc,doc,onSnapshot,query,orderBy,where,signInWithEmailAndPassword,signOut,onAuthStateChanged};
 window.dispatchEvent(new Event('firebaseReady'));
 </script>
 <style>
@@ -149,8 +151,7 @@ header{background:linear-gradient(135deg,var(--azul) 0%,var(--verde) 100%);color
   </div>
 </div>
 <script>
-// 🔐 SEGURANÇA - credenciais atualizadas
-const SENHA_ADMIN='Rafaelrps23';
+// 🔐 SEGURANÇA - sem senha no código, autenticação via Firebase
 const SITE='https://tinyurl.com/3fmdcv6p';
 const URL_SECRETA='adminEster2026';
 const TIMEOUT_MS=30*60*1000;
@@ -259,20 +260,31 @@ function renderLogin(){
   <div class="login-tela"><div class="login-card">
     <img src="${FOTO}" onerror="this.style.display='none'">
     <h1>Acesso Restrito</h1><p>Painel Administrativo</p>
+    <div class="campo"><label>E-mail</label><input id="inp-email" type="email" placeholder="admin@redeester.com" ${bloq?'disabled':''}></div>
     <div class="campo"><label>Senha</label><input id="inp-senha" type="password" placeholder="Digite a senha" onkeydown="if(event.key==='Enter')entrar()" ${bloq?'disabled':''}></div>
     <button class="btn btn-azul btn-full" onclick="entrar()" ${bloq?'disabled':''}>🔐 Entrar</button>
-    <div class="login-erro" id="login-erro">Senha incorreta. Tentativas: <span id="rest">${MAX_TENTATIVAS-getTentativas().n}</span></div>
+    <div class="login-erro" id="login-erro" style="display:none">E-mail ou senha incorretos. Tentativas restantes: <span id="rest">${MAX_TENTATIVAS-getTentativas().n}</span></div>
     <div class="login-bloqueado" id="login-bloq" style="${bloq?'display:block':'display:none'}">🚫 Bloqueado. Tente em ${Math.ceil((bloq||0)/60)} min.</div>
   </div></div>`;
   if(bloq)setTimeout(()=>renderLogin(),bloq*1000);
-  else setTimeout(()=>document.getElementById('inp-senha')?.focus(),100);
+  else setTimeout(()=>document.getElementById('inp-email')?.focus(),100);
 }
 
-function entrar(){
+async function entrar(){
   const bloq=estaBloqueado();if(bloq){toast('Acesso bloqueado!',true);return;}
-  const v=document.getElementById('inp-senha').value.trim();
-  if(v===SENHA_ADMIN){resetarTentativas();setAdminLogado();renderAdmin();}
-  else{registrarErro();const t=getTentativas(),rest=MAX_TENTATIVAS-t.n;document.getElementById('login-erro').style.display='block';if(rest>0){document.getElementById('rest').textContent=rest;}else{document.getElementById('login-erro').style.display='none';document.getElementById('login-bloq').style.display='block';setTimeout(()=>renderLogin(),BLOQUEIO_MS);}}
+  const email=document.getElementById('inp-email').value.trim();
+  const senha=document.getElementById('inp-senha').value.trim();
+  if(!email||!senha){toast('Preencha e-mail e senha',true);return;}
+  try{
+    await _firebase.signInWithEmailAndPassword(_auth,email,senha);
+    resetarTentativas();setAdminLogado();renderAdmin();
+  }catch(e){
+    registrarErro();
+    const t=getTentativas(),rest=MAX_TENTATIVAS-t.n;
+    document.getElementById('login-erro').style.display='block';
+    if(rest>0){document.getElementById('rest').textContent=rest;}
+    else{document.getElementById('login-erro').style.display='none';document.getElementById('login-bloq').style.display='block';setTimeout(()=>renderLogin(),BLOQUEIO_MS);}
+  }
 }
 
 function renderLoginApoiador(pid){
@@ -389,7 +401,7 @@ function renderAdmin(){
   document.addEventListener('click',()=>{clearTimeout(idle);sessionStorage.setItem('admin_ts',Date.now());idle=setTimeout(()=>{toast('Sessão expirada',true);setTimeout(sair,2000);},TIMEOUT_MS);});
 }
 
-function sair(){if(_unsubscribe)_unsubscribe();sessionStorage.clear();renderLogin();}
+function sair(){if(_unsubscribe)_unsubscribe();_firebase.signOut(_auth);sessionStorage.clear();renderLogin();}
 
 function tab(btn,id){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('ativo'));
